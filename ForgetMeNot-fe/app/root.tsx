@@ -9,9 +9,9 @@ import {
 import React, {useState, useEffect, useReducer} from "react";
 import type {Route} from "./+types/root";
 import '../public/app.css';
-import Home from "~/routes/home";
-import {Login} from "~/modal/login";
-import {Register} from "~/modal/register";
+import Home from "./routes/home";
+import {Login} from "./modal/login";
+import {Register} from "./modal/register";
 
 export const links: Route.LinksFunction = () => [
     {rel: "preconnect", href: "https://fonts.googleapis.com"},

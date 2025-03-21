@@ -1,11 +1,11 @@
-@import "../node_modules/tailwindcss";
+@import "tailwindcss";
 
 /*@theme {*/
 /*    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,*/
 /*    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";*/
 /*}*/
 
-html{
+html {
     /** Base colors */
     --clr-dark-a0: #000000;
     --clr-light-a0: #ffffff;
