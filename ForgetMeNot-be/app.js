@@ -10,10 +10,10 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-app.use(express.json());
+// app.use(express.json());
 
 connectDB();
-sequelize.sync({ force: true }) // Change to true to drop & recreate tables
+sequelize.sync({ force: false }) // Change to true to drop & recreate tables
     .then(() => console.log("Tables have been created."))
     .catch(err => console.error("Error creating tables:", err));
 

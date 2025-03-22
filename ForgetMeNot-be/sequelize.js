@@ -1,10 +1,8 @@
 const { Sequelize } = require("sequelize");
-
-const sequelize = new Sequelize("forgetmenot", "postgres", "tonka", {
-    host: "localhost",
-    dialect: "postgres",
-    logging: false, // Set to true to see SQL logs
-});
+const process = require("process");
+const env = process.env.NODE_ENV || 'development';
+const config = require(__dirname + '/config/config.json')[env];
+const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 const connectDB = async () => {
     try {

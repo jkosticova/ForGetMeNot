@@ -1,9 +1,20 @@
 var express = require('express');
-var router = express.Router();
+const User = require("../models/user");
+var userRouter = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+
+userRouter.get('/', async function(req, res) {
+  try {
+    const users = await User.findAll();
+    const usersJson = users.map(user => user.toJSON());
+
+    res.json(usersJson);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
-module.exports = router;
+
+module.exports = userRouter;
