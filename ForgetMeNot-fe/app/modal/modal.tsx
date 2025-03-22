@@ -19,7 +19,7 @@ export const Modal = ({ onClose, children }: { onClose: () => void; children: Re
     }, [onClose]);
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-xs">
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-xs z-10">
             <div
                 ref={modalRef} // Reference to modal content
                 className="p-10 bg-[var(--clr-surface-a10)] rounded-xl"

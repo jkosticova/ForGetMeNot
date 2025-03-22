@@ -54,7 +54,8 @@ export default function Content() {
                         onClose={() => setSelectedItem(null)}
                         number={selectedItem}
                     />
-                )}            </div>
+                )}
+            </div>
         </div>
 
     );

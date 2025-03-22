@@ -116,7 +116,8 @@ export function Layout({children}: { children: React.ReactNode }) {
             <Login
                 isOpen={showLoginModal}
                 onClose={closeLoginModal}
-            />)}
+            />
+        )}
 
         {showRegisterModal && (
             <Register
