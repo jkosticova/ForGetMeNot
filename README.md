@@ -97,4 +97,16 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 
 ---
 
+## Database
+
+create database named forgetmenot in postgres and connect it to project
+save name of database, username, password in -be/config/config.json
+
+```bash
+npx sequelize-cli db:migrate
+npx sequelize-cli db:seed:all
+```
+
+---
+
 Built with ❤️ using React Router.
