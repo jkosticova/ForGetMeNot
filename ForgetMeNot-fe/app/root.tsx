@@ -37,6 +37,10 @@ export function Layout({children}: { children: React.ReactNode }) {
         return false;
     });
 
+    useEffect(() => {
+        console.log("Login state changed:", isLoggedIn);
+    }, [isLoggedIn]);
+
     const handleLogin = () => {
         setShowLoginModal(true);
     };
@@ -116,6 +120,7 @@ export function Layout({children}: { children: React.ReactNode }) {
             <Login
                 isOpen={showLoginModal}
                 onClose={closeLoginModal}
+                setIsLoggedIn={setIsLoggedIn}
             />
         )}
 

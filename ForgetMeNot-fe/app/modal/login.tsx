@@ -1,31 +1,37 @@
 import React, {useState} from "react";
 import {Modal} from "~/modal/modal";
 
-const LoginPage = () => {
+const LoginPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void }) => {
     interface FormData {
-        email: string;
+        username: string;
         password: string;
+
         [key: string]: string;  // Add index signature
     }
 
     interface FormErrors {
-        email: string;
+        username: string;
         password: string;
+
         [key: string]: string;  // Add index signature
     }
 
     const [formData, setFormData] = useState<FormData>({
-        email: '',
+        username: '',
         password: ''
     });
 
     const [formErrors, setFormErrors] = useState<FormErrors>({
-        email: '',
+        username: '',
         password: ''
     });
 
+    const [errorMessage, setErrorMessage] = useState<string>(''); // For displaying API error message
+    const [loading, setLoading] = useState<boolean>(false); // For showing loading state
+
+
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
 
         // Update form data
         setFormData(prevFormData => ({
@@ -40,17 +46,45 @@ const LoginPage = () => {
         }));
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const loginUser = async () => {
+        setLoading(true); // Show loading spinner
+
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log("Login successful");
+                setIsLoggedIn(true);
+            } else {
+                setErrorMessage(result.message || "Login failed. Please check your credentials.");
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
+            setErrorMessage("An error occurred. Please try again.");
+        }
+
+        setLoading(false);
+    }
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         // Perform validation
         const validationErrors: FormErrors = Object.keys(formData).reduce((errors, name) => {
             if (formData[name] === '') {
                 errors[name as keyof FormErrors] = `Pole ${name} je povinné`;
-            } else if (name === 'email' && !/^\S+@\S+\.\S+$/.test(formData[name])) {
-                errors[name as keyof FormErrors] = 'Neplatný email';
-            } else if (name === 'password' && formData[name].length < 8) {
-                errors[name as keyof FormErrors] = 'Heslo musí mať aspoň 8 znakov';
+            } else if (name === 'username' && !/^\S+$/.test(formData[name])) {
+                errors[name as keyof FormErrors] = 'Neplatný username';
+            } else if (name === 'password' && formData[name].length < 6) {
+                errors[name as keyof FormErrors] = 'Heslo musí mať aspoň 6 znakov';
             }
             return errors;
         }, {} as FormErrors);
@@ -61,26 +95,27 @@ const LoginPage = () => {
         // Check if there are any validation errors
         if (Object.values(validationErrors).every((error) => error === '')) {
             // Perform login logic here
-            console.log('Login form submitted:', formData);
+            await loginUser();
         }
     };
+
 
     return (
         <div className="login-form">
             <h2>Prihlásenie</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="email">Email:</label>
+                    <label htmlFor="username">Prihlasovacie meno:</label>
                     <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
+                        type="username"
+                        id="username"
+                        name="username"
+                        value={formData.username}
                         onChange={handleInputChange}
-                        className={formErrors.email ? 'error' : ''}
+                        className={formErrors.username ? 'error' : ''}
                     />
-                    {formErrors.email && (
-                        <span className="error-message">{formErrors.email}</span>
+                    {formErrors.username && (
+                        <span className="error-message">{formErrors.username}</span>
                     )}
                 </div>
 
@@ -108,15 +143,16 @@ const LoginPage = () => {
 };
 
 
-export const Login = ({ isOpen, onClose }: {
+export const Login = ({isOpen, onClose, setIsLoggedIn }: {
     isOpen: boolean;
     onClose: () => void;
+    setIsLoggedIn: (val: boolean) => void ;
 }) => {
     if (!isOpen) return null;
 
     return (
         <Modal onClose={onClose}>
-            <LoginPage></LoginPage>
+            <LoginPage setIsLoggedIn={setIsLoggedIn} ></LoginPage>
         </Modal>
     );
 };
