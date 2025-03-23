@@ -128,6 +128,7 @@ export function Layout({children}: { children: React.ReactNode }) {
             <Register
                 isOpen={showRegisterModal}
                 onClose={closeRegisterModal}
+                setIsLoggedIn={setIsLoggedIn}
             />
         )}
 

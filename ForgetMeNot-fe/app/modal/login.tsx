@@ -26,8 +26,8 @@ const LoginPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void })
         password: ''
     });
 
-    const [errorMessage, setErrorMessage] = useState<string>(''); // For displaying API error message
-    const [loading, setLoading] = useState<boolean>(false); // For showing loading state
+    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
 
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +47,7 @@ const LoginPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void })
     };
 
     const loginUser = async () => {
-        setLoading(true); // Show loading spinner
+        setLoading(true);
 
         try {
             const response = await fetch("/api/login", {
@@ -77,7 +77,6 @@ const LoginPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void })
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        // Perform validation
         const validationErrors: FormErrors = Object.keys(formData).reduce((errors, name) => {
             if (formData[name] === '') {
                 errors[name as keyof FormErrors] = `Pole ${name} je povinné`;
@@ -89,12 +88,9 @@ const LoginPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void })
             return errors;
         }, {} as FormErrors);
 
-        // Update form errors
         setFormErrors(validationErrors);
 
-        // Check if there are any validation errors
         if (Object.values(validationErrors).every((error) => error === '')) {
-            // Perform login logic here
             await loginUser();
         }
     };

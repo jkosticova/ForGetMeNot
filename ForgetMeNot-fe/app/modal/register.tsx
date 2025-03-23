@@ -1,107 +1,143 @@
-import React, {useState} from "react";
-import {Modal} from "~/modal/modal";
+import React, { useState } from "react";
+import { Modal } from "~/modal/modal";
 
-
-const RegisterPage = () => {
+const RegisterPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void }) => {
     interface FormData {
-        name: string;
-        email: string;
+        firstname: string;
+        lastname: string;
+        username: string;
         password: string;
         [key: string]: string;
     }
 
     interface FormErrors {
-        name: string;
-        email: string;
+        firstname: string;
+        lastname: string;
+        username: string;
         password: string;
         [key: string]: string;
     }
 
     const [formData, setFormData] = useState<FormData>({
-        name: '',
-        email: '',
+        firstname: '',
+        lastname: '',
+        username: '',
         password: ''
     });
 
     const [formErrors, setFormErrors] = useState<FormErrors>({
-        name: '',
-        email: '',
+        firstname: '',
+        lastname: '',
+        username: '',
         password: ''
     });
+
+    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
 
-        // Update form data
         setFormData(prevFormData => ({
             ...prevFormData,
             [name]: value
         }));
 
-        // Clear validation errors
         setFormErrors(prevErrors => ({
             ...prevErrors,
             [name]: ''
         }));
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const registerUser = async () => {
+        setLoading(true);
+        setErrorMessage('');
+
+        try {
+            const response = await fetch("/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log("Registration successful");
+                setIsLoggedIn(true);
+            } else {
+                setErrorMessage(result.message || "Registration failed. Please check your inputs.");
+            }
+        } catch (error) {
+            console.error("Error during registration:", error);
+            setErrorMessage("An error occurred. Please try again.");
+        }
+
+        setLoading(false);
+    };
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        // Perform validation
         const validationErrors: FormErrors = Object.keys(formData).reduce((errors, name) => {
             if (formData[name] === '') {
                 errors[name as keyof FormErrors] = `Pole ${name} je povinné`;
-            } else if (name === 'email' && !/^\S+@\S+\.\S+$/.test(formData[name])) {
-                errors[name as keyof FormErrors] = 'Neplatný email';
-            } else if (name === 'password' && formData[name].length < 8) {
-                errors[name as keyof FormErrors] = 'Heslo musí mať aspoň 8 znakov';
+            } else if (name === 'password' && formData[name].length < 6) {
+                errors[name as keyof FormErrors] = 'Heslo musí mať aspoň 6 znakov';
             }
             return errors;
         }, {} as FormErrors);
 
-        // Update form errors
         setFormErrors(validationErrors);
 
-        // Check if there are any validation errors
-        if (Object.values(validationErrors).every((error) => error === '')) {
-            // Perform registration logic here
-            console.log('Registration form submitted:', formData);
+        if (Object.values(validationErrors).every(error => error === '')) {
+            await registerUser();
         }
     };
 
     return (
-        <div className="login-form">
-            <h2>Registracia</h2>
+        <div className="register-form">
+            <h2>Registrácia</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="name">Meno:</label>
+                    <label htmlFor="firstname">Meno:</label>
                     <input
                         type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
+                        id="firstname"
+                        name="firstname"
+                        value={formData.firstname}
                         onChange={handleInputChange}
-                        className={formErrors.name ? 'error' : ''}
+                        className={formErrors.firstname ? 'error' : ''}
                     />
-                    {formErrors.name && (
-                        <span className="error-message">{formErrors.name}</span>
-                    )}
+                    {formErrors.firstname && <span className="error-message">{formErrors.firstname}</span>}
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="email">Email:</label>
+                    <label htmlFor="lastname">Priezvisko:</label>
                     <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
+                        type="text"
+                        id="lastname"
+                        name="lastname"
+                        value={formData.lastname}
                         onChange={handleInputChange}
-                        className={formErrors.email ? 'error' : ''}
+                        className={formErrors.lastname ? 'error' : ''}
                     />
-                    {formErrors.email && (
-                        <span className="error-message">{formErrors.email}</span>
-                    )}
+                    {formErrors.lastname && <span className="error-message">{formErrors.lastname}</span>}
+                </div>
+
+                <div className="form-group">
+                    <label htmlFor="username">Používateľské meno:</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        className={formErrors.username ? 'error' : ''}
+                    />
+                    {formErrors.username && <span className="error-message">{formErrors.username}</span>}
                 </div>
 
                 <div className="form-group">
@@ -114,29 +150,29 @@ const RegisterPage = () => {
                         onChange={handleInputChange}
                         className={formErrors.password ? 'error' : ''}
                     />
-                    {formErrors.password && (
-                        <span className="error-message">{formErrors.password}</span>
-                    )}
+                    {formErrors.password && <span className="error-message">{formErrors.password}</span>}
                 </div>
 
-                <button type="submit" className="submit-btn">
-                    Registracia
+                {errorMessage && <p className="error-text">{errorMessage}</p>}
+
+                <button type="submit" className="submit-btn" disabled={loading}>
+                    {loading ? "Registrácia..." : "Registrácia"}
                 </button>
             </form>
         </div>
     );
 };
 
-
-export const Register = ({isOpen, onClose}: {
+export const Register = ({ isOpen, onClose, setIsLoggedIn }: {
     isOpen: boolean;
     onClose: () => void;
+    setIsLoggedIn: (val: boolean) => void;
 }) => {
     if (!isOpen) return null;
 
     return (
         <Modal onClose={onClose}>
-            <RegisterPage/>
+            <RegisterPage setIsLoggedIn={setIsLoggedIn} />
         </Modal>
     );
 };
