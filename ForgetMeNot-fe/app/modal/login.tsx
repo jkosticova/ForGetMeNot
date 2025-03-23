@@ -1,7 +1,11 @@
 import React, {useState} from "react";
 import {Modal} from "~/modal/modal";
 
-const LoginPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void }) => {
+const LoginPage = ({setIsLoggedIn, setUsername, onClose}: {
+    setIsLoggedIn: (val: boolean) => void,
+    setUsername: (val: string) => void
+    onClose: () => void;
+}) => {
     interface FormData {
         username: string;
         password: string;
@@ -63,6 +67,8 @@ const LoginPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void })
             if (response.ok) {
                 console.log("Login successful");
                 setIsLoggedIn(true);
+                setUsername(result.name);
+                onClose()
             } else {
                 setErrorMessage(result.message || "Login failed. Please check your credentials.");
             }
@@ -139,16 +145,17 @@ const LoginPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void })
 };
 
 
-export const Login = ({isOpen, onClose, setIsLoggedIn }: {
+export const Login = ({isOpen, onClose, setIsLoggedIn, setUsername}: {
     isOpen: boolean;
     onClose: () => void;
-    setIsLoggedIn: (val: boolean) => void ;
+    setIsLoggedIn: (val: boolean) => void;
+    setUsername: (val: string) => void;
 }) => {
     if (!isOpen) return null;
 
     return (
         <Modal onClose={onClose}>
-            <LoginPage setIsLoggedIn={setIsLoggedIn} ></LoginPage>
+            <LoginPage setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} onClose={onClose}></LoginPage>
         </Modal>
     );
 };

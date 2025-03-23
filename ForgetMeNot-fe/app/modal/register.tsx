@@ -1,12 +1,18 @@
-import React, { useState } from "react";
-import { Modal } from "~/modal/modal";
+import React, {useState} from "react";
+import {Modal} from "~/modal/modal";
 
-const RegisterPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void }) => {
+const RegisterPage = ({setIsLoggedIn, setUsername, onClose}: {
+    setIsLoggedIn: (val: boolean) => void,
+    setUsername: (val: string) => void,
+    onClose: () => void;
+
+}) => {
     interface FormData {
         firstname: string;
         lastname: string;
         username: string;
         password: string;
+
         [key: string]: string;
     }
 
@@ -15,6 +21,7 @@ const RegisterPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void
         lastname: string;
         username: string;
         password: string;
+
         [key: string]: string;
     }
 
@@ -36,7 +43,7 @@ const RegisterPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void
     const [loading, setLoading] = useState<boolean>(false);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
 
         setFormData(prevFormData => ({
             ...prevFormData,
@@ -67,6 +74,8 @@ const RegisterPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void
             if (response.ok) {
                 console.log("Registration successful");
                 setIsLoggedIn(true);
+                setUsername(result.name);
+                onClose();
             } else {
                 setErrorMessage(result.message || "Registration failed. Please check your inputs.");
             }
@@ -163,16 +172,17 @@ const RegisterPage = ({ setIsLoggedIn }: { setIsLoggedIn: (val: boolean) => void
     );
 };
 
-export const Register = ({ isOpen, onClose, setIsLoggedIn }: {
+export const Register = ({isOpen, onClose, setIsLoggedIn, setUsername}: {
     isOpen: boolean;
     onClose: () => void;
     setIsLoggedIn: (val: boolean) => void;
+    setUsername: (val: string) => void;
 }) => {
     if (!isOpen) return null;
 
     return (
         <Modal onClose={onClose}>
-            <RegisterPage setIsLoggedIn={setIsLoggedIn} />
+            <RegisterPage setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} onClose={onClose}/>
         </Modal>
     );
 };

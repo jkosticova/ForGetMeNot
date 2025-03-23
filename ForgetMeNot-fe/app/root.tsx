@@ -30,16 +30,13 @@ export function Layout({children}: { children: React.ReactNode }) {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
     const [showRegisterModal, setShowRegisterModal] = useState<boolean>(false);
+    const [username, setUsername] = useState<string>('');
     const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
         if (typeof window !== "undefined") {
             return localStorage.getItem("theme") === "dark";
         }
         return false;
     });
-
-    useEffect(() => {
-        console.log("Login state changed:", isLoggedIn);
-    }, [isLoggedIn]);
 
     const handleLogin = () => {
         setShowLoginModal(true);
@@ -107,9 +104,15 @@ export function Layout({children}: { children: React.ReactNode }) {
                             </button>
                         </>
                     ) : (
-                        <button className="btn" onClick={handleLogout}>
-                            Odhlásenie
-                        </button>
+                        <>
+                            <div className="flex items-center justify-center m-5">
+                                Ahoj {username} !
+                            </div>
+
+                            <button className="btn" onClick={handleLogout}>
+                                Odhlásenie
+                            </button>
+                        </>
                     )}
                 </div>
             </nav>
@@ -121,6 +124,7 @@ export function Layout({children}: { children: React.ReactNode }) {
                 isOpen={showLoginModal}
                 onClose={closeLoginModal}
                 setIsLoggedIn={setIsLoggedIn}
+                setUsername={setUsername}
             />
         )}
 
@@ -129,6 +133,7 @@ export function Layout({children}: { children: React.ReactNode }) {
                 isOpen={showRegisterModal}
                 onClose={closeRegisterModal}
                 setIsLoggedIn={setIsLoggedIn}
+                setUsername={setUsername}
             />
         )}
 

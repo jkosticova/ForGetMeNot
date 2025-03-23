@@ -21,7 +21,11 @@ loginRouter.post('/', async function (req, res) {
       return res.status(401).send('Invalid username or password');
     }
 
-    res.status(200).json({ message: 'Login successful', accountId: account.id });
+    res.status(200).json({
+      message: 'Login successful',
+      accountId: account.id,
+      name: username,
+    });
 
   } catch (error) {
     console.error('Error during login:', error);

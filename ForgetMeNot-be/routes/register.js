@@ -31,8 +31,8 @@ registerRouter.post('/', async function (req, res) {
 
     res.status(201).json({
       message: 'Registration successful',
-      accountId: account.id,
-      userId: user.id
+      userId: user.user_id,
+      name: username,
     });
 
   } catch (error) {
