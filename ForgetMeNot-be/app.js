@@ -12,6 +12,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
 var registerRouter = require('./routes/register');
+var tagsRouter = require('./routes/tags');
+var sectionsRouter = require('./routes/sections');
 
 var app = express();
 // app.use(express.json());
@@ -37,5 +39,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
+app.use('/tags', tagsRouter);
+app.use('/sections', sectionsRouter);
 
 module.exports = app;
