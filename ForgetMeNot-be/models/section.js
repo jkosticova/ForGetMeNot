@@ -13,6 +13,10 @@ const Section = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        section_type: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
     },
     {
         tableName: "Section",

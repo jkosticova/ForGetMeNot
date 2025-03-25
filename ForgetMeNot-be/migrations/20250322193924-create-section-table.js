@@ -13,6 +13,10 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
+            section_type: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
             createdAt: {
                 type: Sequelize.DATE,
                 allowNull: false,
