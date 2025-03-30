@@ -38,6 +38,14 @@ export function Layout({children}: { children: React.ReactNode }) {
         return false;
     });
 
+    useEffect(() => {
+        const savedUsername = localStorage.getItem('username');
+        if (savedUsername) {
+            setUsername(savedUsername);
+            setIsLoggedIn(true);
+        }
+    }, []);
+
     const handleLogin = () => {
         setShowLoginModal(true);
     };
@@ -56,6 +64,11 @@ export function Layout({children}: { children: React.ReactNode }) {
 
     const closeRegisterModal = () => {
         setShowRegisterModal(false);
+    };
+
+    const handleSetUsername = (name: string) => {
+        setUsername(name);
+        localStorage.setItem('username', name);
     };
 
     useEffect(() => {
@@ -124,7 +137,7 @@ export function Layout({children}: { children: React.ReactNode }) {
                 isOpen={showLoginModal}
                 onClose={closeLoginModal}
                 setIsLoggedIn={setIsLoggedIn}
-                setUsername={setUsername}
+                setUsername={handleSetUsername}
             />
         )}
 
@@ -133,7 +146,7 @@ export function Layout({children}: { children: React.ReactNode }) {
                 isOpen={showRegisterModal}
                 onClose={closeRegisterModal}
                 setIsLoggedIn={setIsLoggedIn}
-                setUsername={setUsername}
+                setUsername={handleSetUsername}
             />
         )}
 
