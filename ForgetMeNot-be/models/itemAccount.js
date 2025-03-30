@@ -24,6 +24,10 @@ const ItemAccount = sequelize.define(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
+        link: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         last_minute: {
             type: DataTypes.STRING,
             allowNull: false,

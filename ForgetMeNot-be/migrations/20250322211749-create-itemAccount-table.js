@@ -21,6 +21,10 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
       },
+      link: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       last_minute: {
         type: Sequelize.STRING,
         allowNull: false,
