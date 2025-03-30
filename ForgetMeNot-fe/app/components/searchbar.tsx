@@ -2,15 +2,34 @@ import {useState} from "react";
 
 interface SearchBarProps {
     suggestions: string[];
+    setSuggestions?: React.Dispatch<React.SetStateAction<string>>; // To update suggestions from parent component
 }
-export default function SearchBar({ suggestions }: SearchBarProps) {
+
+export default function SearchBar({suggestions, setSuggestions}: SearchBarProps) {
     const [query, setQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
 
-    // Filter suggestions based on input
     const filteredSuggestions = suggestions.filter((item) =>
         item.toLowerCase().includes(query.toLowerCase())
     );
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") {
+            if (setSuggestions != null && !suggestions.includes(query.trim()) && query.trim() !== "") {
+                setSuggestions(query.trim());
+                setQuery(query.trim());
+                setIsOpen(false);
+            }
+        }
+    };
+
+    const handleClick = (selectedItem: string) => {
+        if (setSuggestions != null && selectedItem.trim() !== "") {
+            setSuggestions(selectedItem.trim());
+            setQuery(selectedItem.trim());
+            setIsOpen(false);
+        }
+    };
 
     return (
         <div className="relative">
@@ -22,36 +41,36 @@ export default function SearchBar({ suggestions }: SearchBarProps) {
                     value={query}
                     onChange={(e) => {
                         setQuery(e.target.value);
-                        setIsOpen(e.target.value.length > 0);
+                        setIsOpen(e.target.value.length > 0); // Open dropdown when there's input
                     }}
+                    onKeyDown={handleKeyDown} // Handle "Enter" key press
                 />
                 <span className="flex">
-          <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-4 h-4 text-gray-600"
-          >
-            <path
-                fillRule="evenodd"
-                d="M12 16.5l-6-6h12l-6 6z"
-                clipRule="evenodd"
-            />
-          </svg>
-        </span>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="w-4 h-4 text-gray-600"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M12 16.5l-6-6h12l-6 6z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                </span>
             </div>
 
             {isOpen && (
                 <div className="mt-2 rounded-xl shadow-md transition-all duration-300 ease-in-out">
-                    <ul className="max-h-60 overflow-y-auto"> {}
+                    <ul className="max-h-60 overflow-y-auto">
                         {filteredSuggestions.length > 0 ? (
                             filteredSuggestions.map((item: string, index: number) => (
                                 <li
                                     key={index}
                                     className="px-4 py-2 cursor-pointer rounded-xl hover:bg-[var(--clr-surface-a10)]"
                                     onClick={() => {
-                                        setQuery(item);
-                                        setIsOpen(false);
+                                        handleClick(item);
                                     }}
                                 >
                                     {item}
