@@ -45,7 +45,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      scenary_rating: {
+      scenery_rating: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },

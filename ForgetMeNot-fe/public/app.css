@@ -34,6 +34,8 @@ html {
     --clr-surface-tonal-a40: #bbada7;
     --clr-surface-tonal-a50: #afa49f;
 
+    --green: #44BB1F;
+
     color: var(--clr-dark-a0);
     background-color: var(--clr-surface-a0);
 }
@@ -78,13 +80,14 @@ body {
     --clr-surface-tonal-a40: #9e8582;
     --clr-surface-tonal-a50: #b19c9a;
 
+    --green: #479130;
+
     color: var(--clr-primary-a50);
     background-color: var(--clr-surface-a0);
 
     .btn:active {
         box-shadow: 3px 2px 22px 1px rgba(0, 0, 0, 0.24);
     }
-
 }
 
 .btn {
@@ -100,6 +103,11 @@ body {
 .btn--special {
     color: var(--clr-dark-a0);
     background: var(--clr-primary-a20);
+}
+
+.btn--focus {
+    color: var(--clr-dark-a0);
+    background: var(--green);
 }
 
 .btn:active {

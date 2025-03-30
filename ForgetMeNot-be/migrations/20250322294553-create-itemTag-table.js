@@ -9,12 +9,12 @@ module.exports = {
                 defaultValue: Sequelize.UUIDV4,
                 primaryKey: true,
             },
-            item_id: {
+            itemAccount_id: {
                 type: Sequelize.UUID,
                 allowNull: false,
                 references: {
-                    model: 'Item',
-                    key: 'item_id',
+                    model: 'ItemAccount',
+                    key: 'id',
                 },
                 onDelete: 'CASCADE',
                 onUpdate: 'CASCADE',

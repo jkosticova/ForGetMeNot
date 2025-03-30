@@ -48,7 +48,7 @@ const ItemAccount = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        scenary_rating: {
+        scenery_rating: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },

@@ -16,5 +16,4 @@ userRouter.get('/', async function(req, res) {
   }
 });
 
-
 module.exports = userRouter;

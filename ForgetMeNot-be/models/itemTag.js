@@ -9,7 +9,7 @@ const ItemTag = sequelize.define(
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        item_id: {
+        itemAccount_id: {
             type: DataTypes.UUID,
             primaryKey: true,
         },
