@@ -103,6 +103,29 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
         }
     };
 
+    const handleDelete = async (itemId:string) => {
+        if (!itemId) {
+            console.error("ItemAccount ID is missing.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/userItems?itemId=${itemId}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error("Failed to delete item:", errorData.error);
+                return;
+            }
+
+            console.log(`Deleted item with ID: ${itemId}`);
+        } catch (error) {
+            console.error("Error deleting item:", error);
+        }
+    };
+
     const handleSave = async () => {
         const data = {
             username,
@@ -378,7 +401,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
             </div>
 
             <div className="flex justify-between">
-                <button className="btn btn--special">Vymaž</button>
+                <button className="btn btn--special" onClick={() => handleDelete(data.id)}>Vymaž</button>
                 <button className={`btn btn--special ${publicItem ? "btn--focus" : ""}`}
                         onClick={() => setPublicItem((publicItem) => !publicItem)}>Verejné
                 </button>

@@ -131,7 +131,7 @@ userItemsRouter.get('/', async (req, res) => {
         let account = await Account.findOne({where: {username: username}});
         console.log('get');
 
-        let itemAccounts = await ItemAccount.findAll({where: {account_id: account.account_id}, attributes: { exclude: ['id', 'createdAt', 'updatedAt'] } });
+        let itemAccounts = await ItemAccount.findAll({where: {account_id: account.account_id}, attributes: { exclude: ['createdAt', 'updatedAt'] } });
 
         console.log('here', itemAccounts.length, itemAccounts);
 
@@ -162,5 +162,27 @@ userItemsRouter.get('/', async (req, res) => {
         });
     }
 });
+
+userItemsRouter.delete('/', async (req, res) => {
+    const { itemId } = req.query;
+
+    try {
+        const deletedCount = await ItemAccount.destroy({ where: { id: itemId } });
+
+        if (deletedCount === 0) {
+            return res.status(404).json({ message: "No item account found with this ID." });
+        }
+
+        res.status(201).json({ message: `Deleted item account with ID: ${itemId}` });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: 'Failed to fetch items',
+            error: err.message
+        });
+    }
+});
+
 
 module.exports = userItemsRouter;
