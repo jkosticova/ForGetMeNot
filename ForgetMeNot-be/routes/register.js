@@ -33,6 +33,7 @@ registerRouter.post('/', async function (req, res) {
       message: 'Registration successful',
       userId: user.user_id,
       name: username,
+      admin: account.is_admin,
     });
 
   } catch (error) {

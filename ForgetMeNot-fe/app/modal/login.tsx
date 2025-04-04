@@ -3,7 +3,7 @@ import {Modal} from "~/modal/modal";
 
 const LoginPage = ({setIsLoggedIn, setUsername, onClose}: {
     setIsLoggedIn: (val: boolean) => void,
-    setUsername: (val: string) => void
+    setUsername: (name: string, admin: boolean) => void
     onClose: () => void;
 }) => {
     interface FormData {
@@ -67,7 +67,7 @@ const LoginPage = ({setIsLoggedIn, setUsername, onClose}: {
             if (response.ok) {
                 console.log("Login successful");
                 setIsLoggedIn(true);
-                setUsername(result.name);
+                setUsername(result.name, result.admin);
                 onClose()
             } else {
                 setErrorMessage(result.message || "Login failed. Please check your credentials.");
@@ -149,7 +149,7 @@ export const Login = ({isOpen, onClose, setIsLoggedIn, setUsername}: {
     isOpen: boolean;
     onClose: () => void;
     setIsLoggedIn: (val: boolean) => void;
-    setUsername: (val: string) => void;
+    setUsername: (name: string, admin: boolean) => void;
 }) => {
     if (!isOpen) return null;
 

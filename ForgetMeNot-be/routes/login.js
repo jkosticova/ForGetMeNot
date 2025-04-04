@@ -25,6 +25,7 @@ loginRouter.post('/', async function (req, res) {
       message: 'Login successful',
       accountId: account.id,
       name: username,
+      admin: account.is_admin,
     });
 
   } catch (error) {

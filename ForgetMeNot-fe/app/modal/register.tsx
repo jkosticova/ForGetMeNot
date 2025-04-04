@@ -3,7 +3,7 @@ import {Modal} from "~/modal/modal";
 
 const RegisterPage = ({setIsLoggedIn, setUsername, onClose}: {
     setIsLoggedIn: (val: boolean) => void,
-    setUsername: (val: string) => void,
+    setUsername: (name: string, admin: boolean) => void,
     onClose: () => void;
 
 }) => {
@@ -74,7 +74,7 @@ const RegisterPage = ({setIsLoggedIn, setUsername, onClose}: {
             if (response.ok) {
                 console.log("Registration successful");
                 setIsLoggedIn(true);
-                setUsername(result.name);
+                setUsername(result.name, result.admin);
                 onClose();
             } else {
                 setErrorMessage(result.message || "Registration failed. Please check your inputs.");
@@ -176,7 +176,7 @@ export const Register = ({isOpen, onClose, setIsLoggedIn, setUsername}: {
     isOpen: boolean;
     onClose: () => void;
     setIsLoggedIn: (val: boolean) => void;
-    setUsername: (val: string) => void;
+    setUsername: (name: string, admin: boolean) => void;
 }) => {
     if (!isOpen) return null;
 

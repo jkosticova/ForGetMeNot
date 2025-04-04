@@ -31,6 +31,7 @@ export function Layout({children}: { children: React.ReactNode }) {
     const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
     const [showRegisterModal, setShowRegisterModal] = useState<boolean>(false);
     const [username, setUsername] = useState<string>('');
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
         if (typeof window !== "undefined") {
             return localStorage.getItem("theme") === "dark";
@@ -44,6 +45,11 @@ export function Layout({children}: { children: React.ReactNode }) {
             setUsername(savedUsername);
             setIsLoggedIn(true);
         }
+
+        const savedIsAdmin = localStorage.getItem('isAdmin');
+        if (savedIsAdmin != null && savedIsAdmin === 'true') {
+            setIsAdmin(true);
+        }
     }, []);
 
     const handleLogin = () => {
@@ -56,6 +62,8 @@ export function Layout({children}: { children: React.ReactNode }) {
 
     const handleLogout = () => {
         setIsLoggedIn(false);
+        localStorage.setItem('username', '');
+        localStorage.setItem('isAdmin', String(false));
     };
 
     const closeLoginModal = () => {
@@ -66,9 +74,12 @@ export function Layout({children}: { children: React.ReactNode }) {
         setShowRegisterModal(false);
     };
 
-    const handleSetUsername = (name: string) => {
+    const handleSetUsername = (name: string, admin: boolean) => {
         setUsername(name);
         localStorage.setItem('username', name);
+
+        setIsAdmin(admin);
+        localStorage.setItem('isAdmin', String(admin));
     };
 
     useEffect(() => {
@@ -94,9 +105,20 @@ export function Layout({children}: { children: React.ReactNode }) {
                     <NavLink to="/about" className={({isActive}) => (isActive ? "btn--active btn" : "btn")}>
                         O nás
                     </NavLink>
-                    <NavLink to="/content" className={({isActive}) => (isActive ? "btn--active btn" : "btn")}>
-                        Content
-                    </NavLink>
+                    {isLoggedIn && !isAdmin? (
+                        <NavLink to="/content" className={({isActive}) => (isActive ? "btn--active btn" : "btn")}>
+                            Content
+                        </NavLink>
+                        ) :
+                        <></>
+                    }
+                    {isLoggedIn && isAdmin ? (
+                        <NavLink to="/admin" className={({isActive}) => (isActive ? "btn--active btn" : "btn")}>
+                            Admin
+                        </NavLink>
+                        ) :
+                        <></>
+                    }
                 </div>
 
                 <button
