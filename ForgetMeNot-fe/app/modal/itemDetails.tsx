@@ -42,13 +42,14 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
             setSection(data.section || "");
             setNotes(data.notes || "");
             setFavouriteParts(data.favourite_parts || "");
-            setLastChapter(data.lastChapter || "");
-            setLastMinute(data.lastMinute || "");
+            setLastChapter(data.last_chapter || "");
+            setLastMinute(data.last_minute || "");
             setDone(data.done || false);
             setTags(data.tags || []);
             setYear(data.year || "");
-            setPublicItem(data.publicItem || false);
-            setSelectedCategory(data.selectedCategory || "knihy");
+            console.log(data)
+            setPublicItem(data.public || false);
+            setSelectedCategory(data.selected_category || "knihy");
             setStoryValue(data.story_rating || 0);
             setVisualValue(data.scenery_rating || 0);
             setEndingValue(data.ending_rating || 0);
@@ -245,7 +246,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
                             {/*    value={section}*/}
                             {/*    onChange={(e) => setSection(e.target.value)}*/}
                             {/*/>*/}
-                            <SearchBar suggestions={filteredSections} setSuggestions={setSection}/>
+                            <SearchBar suggestions={filteredSections} setSuggestions={setSection} placeholder={section}/>
 
                         </div>
                     </div>
@@ -306,7 +307,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
                             <input
                                 className="p-2 mt-1 w-full sm:w-auto"
                                 type="text"
-                                placeholder="Enter Rok"
+                                placeholder={year || "Enter Rok"}
                                 onChange={(e) => setYear(e.target.value)}
                             />
                         </div>
@@ -351,7 +352,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
                         <input
                             className="p-2 mt-1 w-full sm:w-auto"
                             type="text"
-                            placeholder="Enter Posledne videné"
+                            placeholder={lastChapter || "Enter Posledne videné"}
                             value={lastChapter}
                             onChange={(e) => setLastChapter(e.target.value)}
                         /></div>) : (
@@ -360,7 +361,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
                         <input
                             className="p-2 mt-1 w-full sm:w-auto"
                             type="text"
-                            placeholder="Enter Posledne videné"
+                            placeholder={lastMinute || "Enter Posledne videné"}
                             value={lastMinute}
                             onChange={(e) => setLastMinute(e.target.value)}
                         /></div>)}
@@ -368,7 +369,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
                     <div>Obľúbené časti:</div>
                     <textarea
                         className="p-2 mt-1 w-full"
-                        placeholder="Enter your Poznámky"
+                        placeholder={favouriteParts || "Enter your casti"}
                         rows={4}
                         value={favouriteParts}
                         onChange={(e) => setFavouriteParts(e.target.value)}
@@ -379,7 +380,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
                     <div>Poznámky:</div>
                     <textarea
                         className="p-2 mt-1 w-full"
-                        placeholder="Enter your Poznámky"
+                        placeholder={notes || "Enter your Poznámky"}
                         rows={4}
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}

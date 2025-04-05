@@ -2,10 +2,11 @@ import {useState} from "react";
 
 interface SearchBarProps {
     suggestions: string[];
-    setSuggestions?: React.Dispatch<React.SetStateAction<string>>; // To update suggestions from parent component
+    setSuggestions?: React.Dispatch<React.SetStateAction<string>>;
+    placeholder?: string;
 }
 
-export default function SearchBar({suggestions, setSuggestions}: SearchBarProps) {
+export default function SearchBar({suggestions, setSuggestions, placeholder }: SearchBarProps) {
     const [query, setQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
 
@@ -37,7 +38,7 @@ export default function SearchBar({suggestions, setSuggestions}: SearchBarProps)
                 <input
                     type="text"
                     className="bg-transparent outline-none w-full"
-                    placeholder="Search..."
+                    placeholder={placeholder || "Search..."}
                     value={query}
                     onChange={(e) => {
                         setQuery(e.target.value);

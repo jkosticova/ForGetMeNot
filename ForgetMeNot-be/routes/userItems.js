@@ -56,7 +56,7 @@ userItemsRouter.post('/', async function (req, res) {
         console.log(itemAccount);
 
         if (!itemAccount) {
-            const itemAccount = await ItemAccount.create({
+            itemAccount = await ItemAccount.create({
                 item_id: item.item_id,
                 account_id: account.account_id,
                 section_id: sectionItem.section_id,
@@ -87,12 +87,12 @@ userItemsRouter.post('/', async function (req, res) {
             });
         }
 
-        for (const tag in tags) {
-            let tagItem = await Tag.findOne({where: {tag_name: section}});
+        for (const tag of tags) {
+            let tagItem = await Tag.findOne({where: {tag_name: tag}});
             console.log(tagItem);
 
             if (!tagItem) {
-                tagItem = await Tag.create({tag_name: section});
+                tagItem = await Tag.create({tag_name: tag});
                 console.log('created tag ', tagItem);
             }
 
@@ -138,11 +138,25 @@ userItemsRouter.get('/', async (req, res) => {
         for (let i = 0; i < itemAccounts.length; i++) {
             console.log(itemAccounts[i]);
             let item = await Item.findOne({where: {item_id: itemAccounts[i].item_id}});
+            let section = await Section.findOne({where: {section_id: itemAccounts[i].section_id}});
+            let tagsId = await ItemTag.findAll({where: {itemAccount_id: itemAccounts[i].id}});
+
+            let tags = [];
+
+            for (const tagId of tagsId) {
+                let tag = await Tag.findOne({where: {tag_id: tagId.tag_id}});
+
+                if (tag) {
+                    tags.push(tag.tag_name);
+                }
+            }
 
             if (item) {
                 itemAccounts[i].dataValues.title = item.title;
                 itemAccounts[i].dataValues.year = item.year;
                 itemAccounts[i].dataValues.author = item.author;
+                itemAccounts[i].dataValues.section = section.section_name;
+                itemAccounts[i].dataValues.tags = tags;
             }
 
             console.log('After update:', itemAccounts);
