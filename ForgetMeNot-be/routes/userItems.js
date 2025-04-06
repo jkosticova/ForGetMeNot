@@ -7,8 +7,6 @@ const ItemAccount = require("../models/itemAccount");
 const ItemTag = require("../models/itemTag");
 var userItemsRouter = express.Router();
 
-/* GET users listing. */
-
 userItemsRouter.post('/', async function (req, res) {
     const {
         username,
@@ -31,7 +29,6 @@ userItemsRouter.post('/', async function (req, res) {
     } = req.body;
 
     try {
-        console.log('start');
         let account = await Account.findOne({where: {username: username}});
 
         console.log(account);
@@ -119,19 +116,27 @@ userItemsRouter.post('/', async function (req, res) {
 });
 
 userItemsRouter.get('/', async (req, res) => {
-    const { username } = req.query;
+    const {username} = req.query;
 
     console.log('username', username);
 
     if (!username) {
-        return res.status(400).json({ error: 'Username is required' });
+        return res.status(400).json({error: 'Username is required'});
     }
 
     try {
         let account = await Account.findOne({where: {username: username}});
         console.log('get');
 
-        let itemAccounts = await ItemAccount.findAll({where: {account_id: account.account_id}, attributes: { exclude: ['createdAt', 'updatedAt'] } });
+        let itemAccounts = null;
+        if (username !== 'admin') {
+            itemAccounts = await ItemAccount.findAll({
+                where: {account_id: account.account_id},
+                attributes: {exclude: ['createdAt', 'updatedAt']}
+            });
+        } else {
+            itemAccounts = await ItemAccount.findAll({attributes: {exclude: ['createdAt', 'updatedAt']}});
+        }
 
         console.log('here', itemAccounts.length, itemAccounts);
 
@@ -178,16 +183,16 @@ userItemsRouter.get('/', async (req, res) => {
 });
 
 userItemsRouter.delete('/', async (req, res) => {
-    const { itemId } = req.query;
+    const {itemId} = req.query;
 
     try {
-        const deletedCount = await ItemAccount.destroy({ where: { id: itemId } });
+        const deletedCount = await ItemAccount.destroy({where: {id: itemId}});
 
         if (deletedCount === 0) {
-            return res.status(404).json({ message: "No item account found with this ID." });
+            return res.status(404).json({message: "No item account found with this ID."});
         }
 
-        res.status(201).json({ message: `Deleted item account with ID: ${itemId}` });
+        res.status(201).json({message: `Deleted item account with ID: ${itemId}`});
 
     } catch (err) {
         console.error(err);

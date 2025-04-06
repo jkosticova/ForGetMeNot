@@ -11,7 +11,7 @@ export default function SearchBar({suggestions, setSuggestions, placeholder }: S
     const [isOpen, setIsOpen] = useState(false);
 
     const filteredSuggestions = suggestions.filter((item) =>
-        item.toLowerCase().includes(query.toLowerCase())
+        String(item).toLowerCase().includes(query.toLowerCase())
     );
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -42,9 +42,9 @@ export default function SearchBar({suggestions, setSuggestions, placeholder }: S
                     value={query}
                     onChange={(e) => {
                         setQuery(e.target.value);
-                        setIsOpen(e.target.value.length > 0); // Open dropdown when there's input
+                        setIsOpen(e.target.value.length > 0);
                     }}
-                    onKeyDown={handleKeyDown} // Handle "Enter" key press
+                    onKeyDown={handleKeyDown}
                 />
                 <span className="flex">
                     <svg

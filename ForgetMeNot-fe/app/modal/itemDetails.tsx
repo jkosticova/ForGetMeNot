@@ -74,7 +74,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
     };
 
     const filteredSuggestions = tagsList.filter(suggestion =>
-        suggestion.toLowerCase().includes(tag.toLowerCase()) && !tags.includes(suggestion)
+        String(suggestion).toLowerCase().includes(tag.toLowerCase()) && !tags.includes(suggestion)
     );
     const handleAddTag = (e?: React.FormEvent | React.KeyboardEvent) => {
         if (e) e.preventDefault();
@@ -156,7 +156,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
         try {
             console.log(JSON.stringify(data));
 
-            const response = await fetch('api/userItems', {
+            const response = await fetch('/api/userItems', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

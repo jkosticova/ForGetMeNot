@@ -19,4 +19,33 @@ sectionsRouter.get('/', async function (req, res) {
     }
 });
 
+sectionsRouter.post('/', async function (req, res) {
+    const {oldRecord, newRecord} = req.body;
+    console.log(oldRecord, newRecord)
+
+    if (!oldRecord || !newRecord) {
+        return res.status(400).send('Old record and new record are required');
+    }
+
+    try {
+        console.log(oldRecord, newRecord)
+
+        const section = await Section.findOne({where: {section_name: oldRecord.name}});
+
+        if (!section) {
+            return res.status(404).send('Section not found');
+        }
+
+        section.section_name = newRecord.name;
+        section.section_type = newRecord.section_type;
+        await section.save();
+
+        res.json({});
+    } catch (error) {
+        console.error('Error updating section:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
 module.exports = sectionsRouter;

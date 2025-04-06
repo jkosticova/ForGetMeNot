@@ -52,13 +52,11 @@ async function getItems(username: string) {
         },
     });
 
-    // Check if GET request was successful
     if (getResponse.ok) {
         const itemsData = await getResponse.json();
         console.log('Fetched items:', itemsData);
 
         return itemsData;
-        // Process the items data (e.g., display it in your UI)
     } else {
         const errorData = await getResponse.json();
         console.error('Error fetching items:', errorData.message);

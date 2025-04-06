@@ -35,6 +35,9 @@ html {
     --clr-surface-tonal-a50: #afa49f;
 
     --green: #44BB1F;
+    --red: #f76969;
+    --green-hover: #479130;
+    --red-hover: #b84a50;
 
     color: var(--clr-dark-a0);
     background-color: var(--clr-surface-a0);
@@ -57,12 +60,12 @@ body {
     --clr-light-a0: #ffffff;
 
     /** Dark theme primary colors */
-    --clr-primary-a0: #f3d9c9;
-    --clr-primary-a10: #f4ddcf;
-    --clr-primary-a20: #f6e1d5;
-    --clr-primary-a30: #f7e6db;
-    --clr-primary-a40: #f9eae1;
-    --clr-primary-a50: #faeee7;
+    /*--clr-primary-a0-dark: #e64c4c;  */
+    /*--clr-primary-a10-dark: #d94e4c; */
+    /*--clr-primary-a20-dark: #cc514f; */
+    /*--clr-primary-a30-dark: #b84a50; */
+    /*--clr-primary-a40-dark: #a84653; */
+    /*--clr-primary-a50-dark: #9a4955; */
 
     /** Dark theme surface colors */
     --clr-surface-a0: #441d1d;
@@ -81,6 +84,9 @@ body {
     --clr-surface-tonal-a50: #b19c9a;
 
     --green: #479130;
+    --red: #b84a50;
+    --green-hover: #44BB1F;
+    --red-hover: #f76969;
 
     color: var(--clr-primary-a50);
     background-color: var(--clr-surface-a0);

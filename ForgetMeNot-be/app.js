@@ -16,6 +16,8 @@ var tagsRouter = require('./routes/tags');
 var sectionsRouter = require('./routes/sections');
 var userItemsRouter = require('./routes/userItems');
 var accountsRouter = require('./routes/accounts');
+var itemsRouter = require('./routes/items');
+var itemAccountRouter = require('./routes/updateItems');
 
 var app = express();
 // app.use(express.json());
@@ -45,5 +47,7 @@ app.use('/tags', tagsRouter);
 app.use('/sections', sectionsRouter);
 app.use('/userItems', userItemsRouter);
 app.use('/accounts', accountsRouter);
+app.use('/items', itemsRouter);
+app.use('/updateItems', itemAccountRouter);
 
 module.exports = app;
