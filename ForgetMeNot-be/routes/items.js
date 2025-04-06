@@ -43,5 +43,26 @@ itemsRouter.post('/', async function (req, res) {
     }
 });
 
+itemsRouter.delete('/', async (req, res) => {
+    const {itemId} = req.query;
+
+    console.log(req.query)
+    try {
+        const deletedCount = await Item.destroy({where: {item_id: itemId}});
+
+        if (deletedCount === 0) {
+            return res.status(404).json({message: "No item found with this ID."});
+        }
+
+        res.status(201).json({message: `Deleted item with ID: ${itemId}`});
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: 'Failed to fetch items',
+            error: err.message
+        });
+    }
+});
 
 module.exports = itemsRouter;

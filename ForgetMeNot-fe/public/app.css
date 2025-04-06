@@ -60,12 +60,12 @@ body {
     --clr-light-a0: #ffffff;
 
     /** Dark theme primary colors */
-    /*--clr-primary-a0-dark: #e64c4c;  */
-    /*--clr-primary-a10-dark: #d94e4c; */
-    /*--clr-primary-a20-dark: #cc514f; */
-    /*--clr-primary-a30-dark: #b84a50; */
-    /*--clr-primary-a40-dark: #a84653; */
-    /*--clr-primary-a50-dark: #9a4955; */
+    --clr-primary-a0: #f3d9c9;
+    --clr-primary-a10: #f4ddcf;
+    --clr-primary-a20: #f6e1d5;
+    --clr-primary-a30: #f7e6db;
+    --clr-primary-a40: #f9eae1;
+    --clr-primary-a50: #faeee7;
 
     /** Dark theme surface colors */
     --clr-surface-a0: #441d1d;

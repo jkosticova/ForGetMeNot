@@ -44,5 +44,26 @@ userRouter.post('/', async function (req, res) {
     }
 });
 
+userRouter.delete('/', async (req, res) => {
+    const {itemId} = req.query;
+
+    try {
+        const deletedCount = await User.destroy({where: {user_id: itemId}});
+
+        if (deletedCount === 0) {
+            return res.status(404).json({message: "No user found with this ID."});
+        }
+
+        res.status(201).json({message: `Deleted user with ID: ${itemId}`});
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: 'Failed to fetch items',
+            error: err.message
+        });
+    }
+});
+
 
 module.exports = userRouter;

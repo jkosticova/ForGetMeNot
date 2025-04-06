@@ -1,40 +1,40 @@
-import {useEffect, useState} from "react";
-import {Table} from "~/components/table";
-import type {Route} from "./+types/home";
+import {useEffect, useState} from 'react';
+import {Table} from '~/components/table';
+import type {Route} from './+types/home';
 
 export function meta({}: Route.MetaArgs) {
     return [
-        {title: "New React Router App"},
-        {name: "description", content: "admin"},
+        {title: 'New React Router App'},
+        {name: 'description', content: 'admin'},
     ];
 }
 
 async function getAccounts() {
     try {
-        const response = await fetch("/api/accounts");
+        const response = await fetch('/api/accounts');
         if (response.ok) {
             return await response.json();
         } else {
-            console.error("Error fetching accounts:", response.statusText);
+            console.error('Error fetching accounts:', response.statusText);
             return [];
         }
     } catch (error) {
-        console.error("Error during fetch:", error);
+        console.error('Error during fetch:', error);
         return [];
     }
 }
 
 async function getItems() {
     try {
-        const response = await fetch("/api/items");
+        const response = await fetch('/api/items');
         if (response.ok) {
             return await response.json();
         } else {
-            console.error("Error fetching items:", response.statusText);
+            console.error('Error fetching items:', response.statusText);
             return [];
         }
     } catch (error) {
-        console.error("Error during fetch:", error);
+        console.error('Error during fetch:', error);
         return [];
     }
 }
@@ -52,11 +52,11 @@ async function getUserItems() {
                 return rest;
             });
         } else {
-            console.error("Error fetching user items:", response.statusText);
+            console.error('Error fetching user items:', response.statusText);
             return [];
         }
     } catch (error) {
-        console.error("Error during fetch:", error);
+        console.error('Error during fetch:', error);
         return [];
     }
 }
@@ -64,34 +64,30 @@ async function getUserItems() {
 
 async function getTags() {
     try {
-        const response = await fetch("/api/tags");
+        const response = await fetch('/api/tags');
         if (response.ok) {
             return await response.json();
         } else {
-            console.error("Error fetching tags:", response.statusText);
+            console.error('Error fetching tags:', response.statusText);
             return [];
         }
     } catch (error) {
-        console.error("Error during fetch:", error);
+        console.error('Error during fetch:', error);
         return [];
     }
 }
 
 async function getSections() {
     try {
-        const response = await fetch("/api/sections");
+        const response = await fetch('/api/sections');
         if (response.ok) {
-            const data = await response.json();
-            return data.map((section: any) => ({
-                name: section.name || section.section_name,
-                section_type: section.section_type || "unknown",
-            }));
+            return await response.json();
         } else {
-            console.error("Error fetching sections:", response.statusText);
+            console.error('Error fetching sections:', response.statusText);
             return [];
         }
     } catch (error) {
-        console.error("Error during fetch:", error);
+        console.error('Error during fetch:', error);
         return [];
     }
 }
@@ -133,7 +129,86 @@ export default function AdminPage() {
         fetchData();
     }, []);
 
-    const handleDelete = (record: string) => {
+    const handleDelete = async (record: any, type: string) => {
+        console.log(record);
+
+        switch (type) {
+            case 'section':
+                const sectionId = record.section_id;
+
+                const sectionResponse = await fetch(`/api/sections?itemId=${sectionId}`, {
+                    method: 'DELETE',
+                });
+
+                if (sectionResponse.ok) {
+                    console.log('Section delete saved');
+                } else {
+                    console.log('Failed to delete section');
+                }
+                break;
+
+            case 'tag':
+                const tagId = record.tag_id;
+                const tagResponse = await fetch(`/api/tags?itemId=${tagId}`, {
+                    method: 'DELETE',
+                });
+
+                if (tagResponse.ok) {
+                    console.log('Tag deleted');
+                } else {
+                    console.log('Failed to delete tag');
+                }
+                break;
+
+            case 'item':
+                console.log(record.item_id);
+                const itemId = record.item_id;
+
+                const itemResponse = await fetch(`/api/items?itemId=${itemId}`, {
+                    method: 'DELETE',
+                });
+
+                if (itemResponse.ok) {
+                    console.log('Item deleted');
+                } else {
+                    console.log('Failed to delete item');
+                }
+                break;
+
+            case 'account':
+                const accountId = record.account_id;
+
+                const accountResponse = await fetch(`/api/accounts?itemId=${accountId}`, {
+                    method: 'DELETE',
+                });
+
+                const accountResult = await accountResponse.json();
+
+                if (accountResponse.ok) {
+                    console.log('Account deleted saved');
+                } else {
+                    console.log('Failed to delete account');
+                }
+
+                break;
+
+            case 'userItem':
+                const userItemId = record.user_item_id;
+                const userItemResponse = await fetch(`/api/userItems?itemId=${userItemId}`, {
+                    method: 'DELETE',
+                });
+
+                if (userItemResponse.ok) {
+                    console.log('User item deleted');
+                } else {
+                    console.log('Failed to delete user item');
+                }
+                break;
+
+            default:
+                console.error('Unknown editing type:', type);
+                break;
+        }
 
     };
 
@@ -148,7 +223,7 @@ export default function AdminPage() {
 
     const handleSaveEdit = async () => {
         if (editRecord) {
-            console.log("Saving edited record:", editRecord);
+            console.log('Saving edited record:', editRecord);
 
             const data = {
                 oldRecord: prevRecord,
@@ -157,11 +232,11 @@ export default function AdminPage() {
 
             try {
                 switch (editingType) {
-                    case "section":
-                        const sectionResponse = await fetch("/api/sections", {
-                            method: "POST",
+                    case 'section':
+                        const sectionResponse = await fetch('/api/sections', {
+                            method: 'POST',
                             headers: {
-                                "Content-Type": "application/json",
+                                'Content-Type': 'application/json',
                             },
                             body: JSON.stringify(data),
                         });
@@ -169,17 +244,17 @@ export default function AdminPage() {
                         const sectionResult = await sectionResponse.json();
 
                         if (sectionResponse.ok) {
-                            console.log("Section update saved");
+                            console.log('Section update saved');
                         } else {
-                            console.log("Failed to save section update");
+                            console.log('Failed to save section update');
                         }
                         break;
 
-                    case "tag":
-                        const tagResponse = await fetch("/api/tags", {
-                            method: "POST",
+                    case 'tag':
+                        const tagResponse = await fetch('/api/tags', {
+                            method: 'POST',
                             headers: {
-                                "Content-Type": "application/json",
+                                'Content-Type': 'application/json',
                             },
                             body: JSON.stringify(data),
                         });
@@ -187,17 +262,17 @@ export default function AdminPage() {
                         const tagResult = await tagResponse.json();
 
                         if (tagResponse.ok) {
-                            console.log("Tag update saved");
+                            console.log('Tag update saved');
                         } else {
-                            console.log("Failed to save tag update");
+                            console.log('Failed to save tag update');
                         }
                         break;
 
-                    case "item":
-                        const itemResponse = await fetch("/api/items", {
-                            method: "POST",
+                    case 'item':
+                        const itemResponse = await fetch('/api/items', {
+                            method: 'POST',
                             headers: {
-                                "Content-Type": "application/json",
+                                'Content-Type': 'application/json',
                             },
                             body: JSON.stringify(data),
                         });
@@ -205,58 +280,58 @@ export default function AdminPage() {
                         const itemResult = await itemResponse.json();
 
                         if (itemResult.ok) {
-                            console.log("Tag update saved");
+                            console.log('Tag update saved');
                         } else {
-                            console.log("Failed to save tag update");
+                            console.log('Failed to save tag update');
                         }
                         break;
 
-                    case "account":
+                    case 'account':
                         let accountResponse = null;
                         if (data.oldRecord.username != data.newRecord.username) {
-                            accountResponse = await fetch("/api/accounts", {
-                                method: "POST",
+                            accountResponse = await fetch('/api/accounts', {
+                                method: 'POST',
                                 headers: {
-                                    "Content-Type": "application/json",
+                                    'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify(data),
                             });
                             const accountResult = await accountResponse.json();
 
                             if (accountResponse.ok) {
-                                console.log("Account update saved");
+                                console.log('Account update saved');
                             } else {
-                                console.log("Failed to save account update");
+                                console.log('Failed to save account update');
                             }
                             break;
                         }
 
                         if (data.oldRecord.first_name != data.newRecord.first_name || data.oldRecord.last_name != data.newRecord.last_name) {
-                            accountResponse = await fetch("/api/users", {
-                                method: "POST",
+                            accountResponse = await fetch('/api/users', {
+                                method: 'POST',
                                 headers: {
-                                    "Content-Type": "application/json",
+                                    'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify(data),
                             });
                             const accountResult = await accountResponse.json();
 
                             if (accountResponse.ok) {
-                                console.log("User update saved");
+                                console.log('User update saved');
                             } else {
-                                console.log("Failed to save user update");
+                                console.log('Failed to save user update');
                             }
                             break;
                         }
 
                         break;
 
-                    case "userItem":
+                    case 'userItem':
                         console.log(data)
-                        const userItemResponse = await fetch("/api/updateItems", {
-                            method: "POST",
+                        const userItemResponse = await fetch('/api/updateItems', {
+                            method: 'POST',
                             headers: {
-                                "Content-Type": "application/json",
+                                'Content-Type': 'application/json',
                             },
                             body: JSON.stringify(data),
                         });
@@ -264,18 +339,18 @@ export default function AdminPage() {
                         const userItemResult = await userItemResponse.json();
 
                         if (userItemResult.ok) {
-                            console.log("Item update saved");
+                            console.log('Item update saved');
                         } else {
-                            console.log("Failed to save item update");
+                            console.log('Failed to save item update');
                         }
                         break;
 
                     default:
-                        console.error("Unknown editing type:", editingType);
+                        console.error('Unknown editing type:', editingType);
                         break;
                 }
             } catch (error) {
-                console.error("Error during saving section:", error);
+                console.error('Error during saving section:', error);
             }
 
 
@@ -292,15 +367,15 @@ export default function AdminPage() {
     const transformedAccountData = accounts.map(account => ({
         ...account,
         Actions: (
-            <span className="flex space-x-4">
+            <span className='flex space-x-4'>
                 <button
-                    onClick={() => handleEdit(account, "account")}
+                    onClick={() => handleEdit(account, 'account')}
                     className={'px-4 py-2 bg-[var(--green)] text-white rounded-md hover:bg-[var(--green-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'}
                 >
                     Edit
                 </button>
                 <button
-                    onClick={() => handleDelete(account)}
+                    onClick={() => handleDelete(account, 'account')}
                     className={'px-4 py-2 bg-[var(--red)] text-white rounded-md hover:bg-[var(--red-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-300'}
                 >
                     Delete
@@ -312,15 +387,15 @@ export default function AdminPage() {
     const transformedTagsData = tags.map(tag => ({
         ...tag,
         Actions: (
-            <span className="flex space-x-4">
+            <span className='flex space-x-4'>
                 <button
-                    onClick={() => handleEdit(tag, "tag")}
+                    onClick={() => handleEdit(tag, 'tag')}
                     className={'px-4 py-2 bg-[var(--green)] text-white rounded-md hover:bg-[var(--green-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'}
                 >
                     Edit
                 </button>
                 <button
-                    onClick={() => handleDelete(tag)}
+                    onClick={() => handleDelete(tag, 'tag')}
                     className={'px-4 py-2 bg-[var(--red)] text-white rounded-md hover:bg-[var(--red-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-300'}
                 >
                     Delete
@@ -332,15 +407,15 @@ export default function AdminPage() {
     const transformedSectionsData = sections.map(section => ({
         ...section,
         Actions: (
-            <span className="flex space-x-4">
+            <span className='flex space-x-4'>
                 <button
-                    onClick={() => handleEdit(section, "section")}
+                    onClick={() => handleEdit(section, 'section')}
                     className={'px-4 py-2 bg-[var(--green)] text-white rounded-md hover:bg-[var(--green-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'}
                 >
                     Edit
                 </button>
                 <button
-                    onClick={() => handleDelete(section)}
+                    onClick={() => handleDelete(section, 'section')}
                     className={'px-4 py-2 bg-[var(--red)] text-white rounded-md hover:bg-[var(--red-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-300'}
                 >
                     Delete
@@ -352,15 +427,15 @@ export default function AdminPage() {
     const transformedUserItemsData = userItems.map(item => ({
         ...item,
         Actions: (
-            <span className="flex space-x-4">
+            <span className='flex space-x-4'>
                 <button
-                    onClick={() => handleEdit(item, "userItem")}
+                    onClick={() => handleEdit(item, 'userItem')}
                     className={'px-4 py-2 bg-[var(--green)] text-white rounded-md hover:bg-[var(--green-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'}
                 >
                     Edit
                 </button>
                 <button
-                    onClick={() => handleDelete(item)}
+                    onClick={() => handleDelete(item, 'userItem')}
                     className={'px-4 py-2 bg-[var(--red)] text-white rounded-md hover:bg-[var(--red-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-300'}
                 >
                     Delete
@@ -373,17 +448,27 @@ export default function AdminPage() {
         ...item,
         Actions: (
             <span>
-                <button onClick={() => handleEdit(item, "item")}>Edit</button>
-                <button onClick={() => handleDelete(item)}>Delete</button>
+                <button
+                    onClick={() => handleEdit(item, 'item')}
+                        className={'px-4 py-2 bg-[var(--green)] text-white rounded-md hover:bg-[var(--green-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'}
+                >
+                    Edit
+                </button>
+                <button
+                    onClick={() => handleDelete(item, 'item')}
+                    className={'px-4 py-2 bg-[var(--red)] text-white rounded-md hover:bg-[var(--red-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-300'}
+                >
+                    Delete
+                </button>
             </span>
         ),
     }));
 
-    const accountColumns = accounts.length > 0 ? [...Object.keys(accounts[0]), "Actions"] : [];
-    const tagColumns = tags.length > 0 ? [...Object.keys(tags[0]), "Actions"] : [];
-    const sectionColumns = sections.length > 0 ? [...Object.keys(sections[0]), "Actions"] : [];
-    const userItemColumns = userItems.length > 0 ? [...Object.keys(userItems[0]).filter(key => key !== 'id'), "Actions"] : [];
-    const itemColumns = items.length > 0 ? [...Object.keys(items[0]), "Actions"] : [];
+    const accountColumns = accounts.length > 0 ? [...Object.keys(accounts[0]).filter(key => key !== 'account_id'), 'Actions'] : [];
+    const tagColumns = tags.length > 0 ? [...Object.keys(tags[0]).filter(key => key !== 'tag_id'), 'Actions'] : [];
+    const sectionColumns = sections.length > 0 ? [...Object.keys(sections[0]).filter(key => key !== 'section_id'), 'Actions'] : [];
+    const userItemColumns = userItems.length > 0 ? [...Object.keys(userItems[0]).filter(key => key !== 'id'), 'Actions'] : [];
+    const itemColumns = items.length > 0 ? [...Object.keys(items[0]), 'Actions'] : [];
 
     const renderEditForm = () => {
         if (!editRecord || !editingType) return null;
@@ -391,7 +476,7 @@ export default function AdminPage() {
         let formFields = [];
 
         formFields = Object.keys(editRecord).map((key) => ({
-            label: key.replace(/_/g, " ").toUpperCase(),
+            label: key.replace(/_/g, ' ').toUpperCase(),
             oldValue: prevRecord[key],
             newValue: editRecord[key],
             field: key,
@@ -399,22 +484,22 @@ export default function AdminPage() {
 
         return (
             <form>
-                <table className="min-w-full table-auto border-collapse shadow-md rounded-lg overflow-hidden">
+                <table className={'min-w-full table-auto border-collapse shadow-md rounded-lg overflow-hidden'}>
                     <thead>
-                    <tr className="bg-gray-100">
-                        <th className="px-4 py-2 text-left font-semibold text-gray-700 border-b">Original Value</th>
-                        <th className="px-4 py-2 text-left font-semibold text-gray-700 border-b">Updated Value</th>
+                    <tr className='bg-gray-100'>
+                        <th className={'px-4 py-2 text-left font-semibold text-gray-700 border-b'}>Original Value</th>
+                        <th className={'px-4 py-2 text-left font-semibold text-gray-700 border-b'}>Updated Value</th>
                     </tr>
                     </thead>
                     <tbody>
                     {formFields.map((field: any) => (
-                        <tr key={field.field} className="odd:bg-white even:bg-gray-50">
-                            <td className="px-4 py-2 text-gray-600 border-b">
+                        <tr key={field.field}>
+                            <td className={'px-4 py-2 text-gray-600 border-b'}>
                                 <p>{field.oldValue}</p>
                             </td>
-                            <td className="px-4 py-2 border-b">
+                            <td className={'px-4 py-2 border-b'}>
                                 <input
-                                    type="text"
+                                    type='text'
                                     value={field.newValue}
                                     onChange={(e) => {
                                         setEditRecord((prevRecord: any) => ({
@@ -422,7 +507,7 @@ export default function AdminPage() {
                                             [field.field]: e.target.value,
                                         }));
                                     }}
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className={'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500'}
                                 />
                             </td>
                         </tr>
@@ -430,18 +515,18 @@ export default function AdminPage() {
                     </tbody>
                 </table>
 
-                <div className="form-actions mt-4 flex space-x-4 justify-end">
+                <div className={'form-actions mt-4 flex space-x-4 justify-end'}>
                     <button
-                        type="button"
+                        type='button'
                         onClick={handleCancelEdit}
-                        className="px-6 py-3 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-300"
+                        className={'px-6 py-3 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-300'}
                     >
                         Cancel
                     </button>
                     <button
-                        type="button"
+                        type='button'
                         onClick={handleSaveEdit}
-                        className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300"
+                        className={'px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-300'}
                     >
                         Save
                     </button>
@@ -486,7 +571,7 @@ export default function AdminPage() {
                 </button>
             </div>
 
-            <div className="mt-6">
+            <div className='mt-6'>
                 {activeTab === 'accounts' && (
                     <div className={'bg-white shadow-md rounded-lg overflow-hidden'}>
                         <Table data={transformedAccountData} columns={accountColumns}/>

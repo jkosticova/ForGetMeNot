@@ -6,7 +6,7 @@ var tagsRouter = express.Router();
 tagsRouter.get('/', async function (req, res) {
     try {
         const tags = await Tag.findAll();
-        const tagsJson = tags.map(tags => tags.toJSON()).map(tags => ({name: tags.tag_name}));
+        const tagsJson = tags.map(tags => tags.toJSON()).map(tags => ({tag_id: tags.tag_id, name: tags.tag_name}));
 
         res.json(tagsJson);
     } catch (error) {
@@ -41,6 +41,28 @@ tagsRouter.post('/', async function (req, res) {
         res.status(500).send('Internal Server Error');
     }
 });
+
+tagsRouter.delete('/', async (req, res) => {
+    const {itemId} = req.query;
+
+    try {
+        const deletedCount = await Tag.destroy({where: {tag_id: itemId}});
+
+        if (deletedCount === 0) {
+            return res.status(404).json({message: "No tag found with this ID."});
+        }
+
+        res.status(201).json({message: `Deleted tag with ID: ${itemId}`});
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: 'Failed to fetch items',
+            error: err.message
+        });
+    }
+});
+
 
 
 module.exports = tagsRouter;

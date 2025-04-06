@@ -8,6 +8,7 @@ sectionsRouter.get('/', async function (req, res) {
     try {
         const sections = await Section.findAll();
         const sectionsJson = sections.map(section => section.toJSON()).map(section => ({
+            section_id: section.section_id,
             section_name: section.section_name,
             section_type: section.section_type
         }));
@@ -47,5 +48,25 @@ sectionsRouter.post('/', async function (req, res) {
     }
 });
 
+sectionsRouter.delete('/', async (req, res) => {
+    const {itemId} = req.query;
+
+    try {
+        const deletedCount = await Section.destroy({where: {section_id: itemId}});
+
+        if (deletedCount === 0) {
+            return res.status(404).json({message: "No section found with this ID."});
+        }
+
+        res.status(201).json({message: `Deleted section with ID: ${itemId}`});
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({
+            message: 'Failed to fetch items',
+            error: err.message
+        });
+    }
+});
 
 module.exports = sectionsRouter;
