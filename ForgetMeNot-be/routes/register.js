@@ -2,6 +2,7 @@ var express = require('express');
 const User = require("../models/user");
 const Account = require("../models/account");
 var registerRouter = express.Router();
+const bcrypt = require('bcrypt');
 
 /* POST register */
 registerRouter.post('/', async function (req, res) {
@@ -22,10 +23,12 @@ registerRouter.post('/', async function (req, res) {
       console.log('created user ', user);
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const account = await Account.create({
       username,
       user_id: user.user_id,
-      password
+      password: hashedPassword,
     });
 
 

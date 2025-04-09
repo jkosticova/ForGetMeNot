@@ -1,5 +1,6 @@
 var express = require('express');
 const Account = require("../models/account");
+const {compare} = require("bcrypt");
 var loginRouter = express.Router();
 
 /* POST login */
@@ -17,7 +18,9 @@ loginRouter.post('/', async function (req, res) {
       return res.status(401).send('Invalid username or password');
     }
 
-    if (account.password !== password) {
+    const match = await compare(password, account.password);
+
+    if (!match) {
       return res.status(401).send('Invalid username or password');
     }
 
