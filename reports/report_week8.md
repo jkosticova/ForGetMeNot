@@ -12,11 +12,11 @@
 - deployment
 
 # Vykonaná práca:
-4494f50 Create home page to view public items
-5d18fdb Update tables ItemTag and ItemAccount
-54016d8 Update seeder for account
-07cc7f0 Prepare for https
-2efda3c Add hashing to password
+- 4494f50 Create home page to view public items
+- 5d18fdb Update tables ItemTag and ItemAccount
+- 54016d8 Update seeder for account
+- 07cc7f0 Prepare for https
+- 2efda3c Add hashing to password
 
 # Zdôvodnenie rozdielov medzi plánom a vykonanou prácou:
 
