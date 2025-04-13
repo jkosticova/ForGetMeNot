@@ -12,17 +12,17 @@ const ItemAccount = sequelize.define(
         item_id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
-            primaryKey: true,
+            foreignKey: true,
         },
         account_id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
-            primaryKey: true,
+            foreignKey: true,
         },
         section_id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
-            primaryKey: true,
+            foreignKey: true,
         },
         link: {
             type: DataTypes.STRING,

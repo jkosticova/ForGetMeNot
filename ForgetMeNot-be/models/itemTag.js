@@ -11,11 +11,11 @@ const ItemTag = sequelize.define(
         },
         itemAccount_id: {
             type: DataTypes.UUID,
-            primaryKey: true,
+            foreignKey: true,
         },
         tag_id: {
             type: DataTypes.UUID,
-            primaryKey: true,
+            foreignKey: true,
         },
     },
     {
