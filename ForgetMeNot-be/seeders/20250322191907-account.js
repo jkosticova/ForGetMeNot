@@ -7,9 +7,9 @@ module.exports = {
         await queryInterface.bulkInsert('Account', [
             {
                 account_id: uuidv4(),
-                username: 'normal',
+                username: 'abc',
                 user_id: '3e52d9f7-d841-4111-abdd-d11b8ff045f1',
-                password: 'normal',
+                password: '$2b$10$FbJEOqyOn8WzK0Jt6CJdNumANHUqF6B0oEsjs7onRlpAs86jNxNXS', //abcabc
                 is_admin: false,
                 createdAt: new Date(),
                 updatedAt: new Date(),
@@ -18,7 +18,7 @@ module.exports = {
                 account_id: uuidv4(),
                 username: 'admin',
                 user_id: '3e52d9f7-d841-4111-abdd-d11b8ff045f1',
-                password: 'admin',
+                password: '$2b$10$QD9n2AjEDYxXOG4Wtm/YxOXFgjtVRVW0pIes0BqZpyMTT/wW8imAy', //adminadmin
                 is_admin: true,
                 createdAt: new Date(),
                 updatedAt: new Date(),
