@@ -9,6 +9,7 @@ var userItemsRouter = express.Router();
 
 userItemsRouter.post('/', async function (req, res) {
     const {
+        id,
         username,
         title,
         author,
@@ -49,8 +50,19 @@ userItemsRouter.post('/', async function (req, res) {
             console.log('created section ', sectionItem);
         }
 
-        let itemAccount = await ItemAccount.findOne({where: {item_id: item.item_id, account_id: account.account_id}});
-        console.log(itemAccount);
+        let itemAccount = null;
+
+        if (id === null) {
+            itemAccount = await ItemAccount.findOne({
+                where: {
+                    item_id: item.item_id,
+                    account_id: account.account_id
+                }
+            });
+            console.log(itemAccount);
+        } else {
+            itemAccount = await ItemAccount.findOne({where: {id: id}});
+        }
 
         if (!itemAccount) {
             itemAccount = await ItemAccount.create({
@@ -69,7 +81,9 @@ userItemsRouter.post('/', async function (req, res) {
                 public: publicItem,
             });
         } else {
-            await itemAccount.update({
+            console.log("UPDATEWEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", sectionItem.section_name, sectionItem.section_id)
+            itemAccount = await itemAccount.update({
+                item_id: item.item_id,
                 section_id: sectionItem.section_id,
                 link: link,
                 last_minute: lastMinute,
@@ -83,6 +97,8 @@ userItemsRouter.post('/', async function (req, res) {
                 public: publicItem,
             });
         }
+
+        await ItemTag.destroy({ where: { itemAccount_id: itemAccount.id } });
 
         for (const tag of tags) {
             let tagItem = await Tag.findOne({where: {tag_name: tag}});
@@ -118,7 +134,7 @@ userItemsRouter.post('/', async function (req, res) {
 userItemsRouter.get('/', async (req, res) => {
     const {username} = req.query;
 
-    console.log('username', username);
+    // console.log('username', username);
 
     if (!username) {
         return res.status(400).json({error: 'Username is required'});
@@ -126,7 +142,7 @@ userItemsRouter.get('/', async (req, res) => {
 
     try {
         let account = await Account.findOne({where: {username: username}});
-        console.log('get');
+        // console.log('get');
 
         let itemAccounts = null;
         if (username !== 'admin') {
@@ -138,10 +154,11 @@ userItemsRouter.get('/', async (req, res) => {
             itemAccounts = await ItemAccount.findAll({attributes: {exclude: ['createdAt', 'updatedAt']}});
         }
 
-        console.log('here', itemAccounts.length, itemAccounts);
+        // console.log('here', itemAccounts.length, itemAccounts);
 
         for (let i = 0; i < itemAccounts.length; i++) {
-            console.log(itemAccounts[i]);
+            // console.log(itemAccounts[i]);
+            let account = await Account.findOne({where: {account_id: itemAccounts[i].account_id}})
             let item = await Item.findOne({where: {item_id: itemAccounts[i].item_id}});
             let section = await Section.findOne({where: {section_id: itemAccounts[i].section_id}});
             let tagsId = await ItemTag.findAll({where: {itemAccount_id: itemAccounts[i].id}});
@@ -159,15 +176,17 @@ userItemsRouter.get('/', async (req, res) => {
             if (item) {
                 itemAccounts[i].dataValues.title = item.title;
                 itemAccounts[i].dataValues.year = item.year;
+                itemAccounts[i].dataValues.type = item.type;
                 itemAccounts[i].dataValues.author = item.author;
                 itemAccounts[i].dataValues.section = section.section_name;
                 itemAccounts[i].dataValues.tags = tags;
+                itemAccounts[i].dataValues.username = account.username;
             }
 
-            console.log('After update:', itemAccounts);
+            // console.log('After update:', itemAccounts);
         }
 
-        console.log('all info', itemAccounts);
+        // console.log('all info', itemAccounts);
 
         res.status(201).json({
             items: itemAccounts,

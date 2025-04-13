@@ -18,6 +18,7 @@ var userItemsRouter = require('./routes/userItems');
 var accountsRouter = require('./routes/accounts');
 var itemsRouter = require('./routes/items');
 var itemAccountRouter = require('./routes/updateItems');
+var authorsRouter = require('./routes/authors');
 
 var app = express();
 // app.use(express.json());
@@ -49,5 +50,6 @@ app.use('/userItems', userItemsRouter);
 app.use('/accounts', accountsRouter);
 app.use('/items', itemsRouter);
 app.use('/updateItems', itemAccountRouter);
+app.use('/authors', authorsRouter);
 
 module.exports = app;

@@ -1,31 +1,47 @@
 import {useState} from "react";
 
 interface SearchBarProps {
-    suggestions: string[];
     setSuggestions?: React.Dispatch<React.SetStateAction<string>>;
     placeholder?: string;
+    url?: string;
 }
 
-export default function SearchBar({suggestions, setSuggestions, placeholder }: SearchBarProps) {
-    const [query, setQuery] = useState("");
-    const [isOpen, setIsOpen] = useState(false);
+export default function SearchBar({setSuggestions, placeholder, url}: SearchBarProps) {
+    const [query, setQuery] = useState<string>("");
+    const [items, setItems] = useState<string[]>([]);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    const filteredSuggestions = suggestions.filter((item) =>
-        String(item).toLowerCase().includes(query.toLowerCase())
-    );
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target.value;
+        setQuery(input);
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === "Enter") {
-            if (setSuggestions != null && !suggestions.includes(query.trim()) && query.trim() !== "") {
-                setSuggestions(query.trim());
-                setQuery(query.trim());
-                setIsOpen(false);
+        if (input.length > 0) {
+            setIsOpen(true);
+            try {
+
+                const response = await fetch(`/api/${url}?query=${input}`);
+
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+
+                const data = await response.json();
+                setItems(data);
+            } catch (error) {
+                console.error("Error fetching authors:", error);
             }
+        } else {
+            if (setSuggestions != null) {
+                setSuggestions('')
+            }
+
+            setIsOpen(false);
         }
     };
 
     const handleClick = (selectedItem: string) => {
-        if (setSuggestions != null && selectedItem.trim() !== "") {
+        console.log(selectedItem)
+        if (setSuggestions != null) {
             setSuggestions(selectedItem.trim());
             setQuery(selectedItem.trim());
             setIsOpen(false);
@@ -40,11 +56,7 @@ export default function SearchBar({suggestions, setSuggestions, placeholder }: S
                     className="bg-transparent outline-none w-full"
                     placeholder={placeholder || "Search..."}
                     value={query}
-                    onChange={(e) => {
-                        setQuery(e.target.value);
-                        setIsOpen(e.target.value.length > 0);
-                    }}
-                    onKeyDown={handleKeyDown}
+                    onChange={handleChange}
                 />
                 <span className="flex">
                     <svg
@@ -65,14 +77,12 @@ export default function SearchBar({suggestions, setSuggestions, placeholder }: S
             {isOpen && (
                 <div className="mt-2 rounded-xl shadow-md transition-all duration-300 ease-in-out">
                     <ul className="max-h-60 overflow-y-auto">
-                        {filteredSuggestions.length > 0 ? (
-                            filteredSuggestions.map((item: string, index: number) => (
+                        {items.length > 0 ? (
+                            items.map((item, index) => (
                                 <li
                                     key={index}
-                                    className="px-4 py-2 cursor-pointer rounded-xl hover:bg-[var(--clr-surface-a10)]"
-                                    onClick={() => {
-                                        handleClick(item);
-                                    }}
+                                    className="p-2 cursor-pointer hover:bg-gray-200"
+                                    onClick={() => handleClick(item)}
                                 >
                                     {item}
                                 </li>

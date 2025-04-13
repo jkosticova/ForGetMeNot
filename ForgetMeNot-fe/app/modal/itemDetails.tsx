@@ -2,17 +2,14 @@ import {Modal} from "~/modal/modal";
 import React, {useEffect, useState} from "react";
 import {Slider} from "~/components/slider";
 import SearchBar from "~/components/searchbar";
-
 interface ItemDetailsPageProps {
     username: string,
     data: any;
-    tagsList: string[];
-    sectionList: { name: string; section_type: string }[];
 }
 
-
-const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsList, sectionList}) => {
-    const [filteredSections, setFilteredSections] = useState<string[]>([]);
+const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data}) => {
+    const [filteredSections, setFilteredSections] = useState<any[]>([]);
+    const [filteredTag, setFilteredTag] = useState<string[]>([]);
 
     const [storyValue, setStoryValue] = useState<number>(0);
     const [visualValue, setVisualValue] = useState<number>(0);
@@ -31,11 +28,13 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
     const [tag, setTag] = useState<string>("");
     const [tags, setTags] = useState<string[]>([]);
     const [year, setYear] = useState<string>();
+    const [id, setId] = useState<number>();
     const [publicItem, setPublicItem] = useState<boolean>(false);
     const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
 
     useEffect(() => {
         if (data) {
+            setId(data.id)
             setTitle(data.title || "");
             setAuthor(data.author || "");
             setLink(data.link || "");
@@ -47,7 +46,6 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
             setDone(data.done || false);
             setTags(data.tags || []);
             setYear(data.year || "");
-            console.log(data)
             setPublicItem(data.public || false);
             setSelectedCategory(data.selected_category || "knihy");
             setStoryValue(data.story_rating || 0);
@@ -68,40 +66,23 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
 
     const filterSections = (type: string | null = null) => {
         setFilteredSections(
-            type ? sectionList.filter(section => section.section_type === type).map(section => section.name)
-                : sectionList.map(section => section.name)
+            type ? filteredSections.filter(section => section.section_type === type).map(section => section.name)
+                : filteredSections.map(section => section.name)
         );
     };
 
-    const filteredSuggestions = tagsList.filter(suggestion =>
+    const filteredSuggestions = filteredTag.filter(suggestion =>
         String(suggestion).toLowerCase().includes(tag.toLowerCase()) && !tags.includes(suggestion)
     );
-    const handleAddTag = (e?: React.FormEvent | React.KeyboardEvent) => {
-        if (e) e.preventDefault();
-
-        if (!tag.trim() || tags.includes(tag.trim())) return;
-
-        setTags([...tags, tag.trim()]);
+    const handleAddTag = () => {
+        const trimmed = tag.trim();
+        if (trimmed && !tags.includes(trimmed)) {
+            setTags([...tags, trimmed]);
+        }
         setTag("");
     };
-    const handleRemoveTag = (tag: string) => {
-        setTags(tags.filter((t) => t !== tag));
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === "ArrowDown") {
-            setHighlightedIndex(prevIndex => Math.min(filteredSuggestions.length - 1, prevIndex + 1));
-        } else if (e.key === "ArrowUp") {
-            setHighlightedIndex(prevIndex => Math.max(0, prevIndex - 1));
-        } else if (e.key === "Enter") {
-            e.preventDefault();
-            if (highlightedIndex >= 0 && highlightedIndex < filteredSuggestions.length) {
-                setTag(filteredSuggestions[highlightedIndex]);
-                console.log(filteredSuggestions[highlightedIndex]);
-                handleAddTag();
-                setHighlightedIndex(-1);
-            }
-        }
+    const handleRemoveTag = (removeTag: string) => {
+        setTags(tags.filter(t => t !== removeTag));
     };
 
     const handleDelete = async (itemId:string) => {
@@ -129,6 +110,7 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
 
     const handleSave = async () => {
         const data = {
+            id,
             username,
             title,
             author,
@@ -147,6 +129,8 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
             endingValue,
             publicItem
         };
+
+        console.log(id)
 
         if (!title || !author) {
             console.log('Title or author not set:');
@@ -239,78 +223,44 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
                     <div className="flex flex-wrap gap-5 justify-between">
                         <div>
                             Sekcia:
-                            {/*<input*/}
-                            {/*    className="p-2 mt-1 w-full sm:w-auto"*/}
-                            {/*    type="text"*/}
-                            {/*    placeholder="Enter Sekcia"*/}
-                            {/*    value={section}*/}
-                            {/*    onChange={(e) => setSection(e.target.value)}*/}
-                            {/*/>*/}
-                            <SearchBar suggestions={filteredSections} setSuggestions={setSection} placeholder={section}/>
-
+                            <SearchBar url={'sections'} setSuggestions={setSection} placeholder={section}/>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex">
-                    <div className="flex flex-col justify-around sm:w-auto">
-                        <div>
-                            <p>Tagy:</p>
-                            <form onSubmit={handleAddTag}>
-                                <input
-                                    className="p-2 mt-1 w-full sm:w-auto border rounded"
-                                    type="text"
-                                    placeholder="Enter Tag"
-                                    value={tag}
-                                    onChange={(e) => setTag(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                />
-                            </form>
+                <div>
+                    <p>Tagy:</p>
+                    <SearchBar
+                        url="tags"
+                        setSuggestions={(value) => {
+                            const newSuggestion = typeof value === "function" ? value("") : value;
 
-                            {tag && filteredSuggestions.length > 0 && (
-                                <ul className="mt-2 border bg-white p-2 rounded shadow-lg w-full sm:w-auto absolute z-10">
-                                    {filteredSuggestions.map((suggestion, index) => (
-                                        <li
-                                            key={index}
-                                            className={`cursor-pointer p-1 ${highlightedIndex === index ? "bg-gray-200" : ""}`}
-                                            onClick={() => {
-                                                setTag(suggestion);
-                                                handleAddTag();
-                                                setHighlightedIndex(-1);
-                                            }}
-                                            onMouseEnter={() => setHighlightedIndex(index)}
-                                        >
-                                            {suggestion}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+                            if (
+                                newSuggestion &&
+                                !filteredTag.includes(newSuggestion) &&
+                                !tags.includes(newSuggestion)
+                            ) {
+                                setFilteredTag((prev) => [...prev, newSuggestion]);
+                                setTag(newSuggestion);
+                            }
+                        }}
+                    />
 
-                            <div className="flex flex-wrap gap-2 mt-4 mb-4">
-                                {tags.map((tag, index) => (
-                                    <div key={index}
-                                         className="flex items-center px-3 py-1 rounded-lg shadow-md w-fit">
-                                        <span className="mr-2">#{tag}</span>
-                                        <button
-                                            onClick={() => handleRemoveTag(tag)}
-                                            className="bg-red-800 hover:bg-red-600 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold"
-                                        >
-                                            ✕
-                                        </button>
-                                    </div>
-                                ))}
+                    <div className="flex flex-wrap gap-2 mt-4 mb-4">
+                        {tags.map((tag, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center px-3 py-1 rounded-lg shadow-md bg-gray-200 dark:bg-neutral-600"
+                            >
+                                <span className="mr-2">#{tag}</span>
+                                <button
+                                    onClick={() => handleRemoveTag(tag)}
+                                    className="bg-red-600 hover:bg-red-400 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                                >
+                                    ✕
+                                </button>
                             </div>
-                        </div>
-
-                        <div>
-                            Rok:
-                            <input
-                                className="p-2 mt-1 w-full sm:w-auto"
-                                type="text"
-                                placeholder={year || "Enter Rok"}
-                                onChange={(e) => setYear(e.target.value)}
-                            />
-                        </div>
+                        ))}
                     </div>
                 </div>
 
@@ -412,11 +362,9 @@ const ItemDetailsPage: React.FC<ItemDetailsPageProps> = ({username, data, tagsLi
     );
 };
 
-export const ItemDetails = ({username, data, isOpen, onClose, tagsList, sectionList}: {
+export const ItemDetails = ({username, data, isOpen, onClose}: {
     isOpen: boolean,
     onClose: () => void,
-    tagsList: string[],
-    sectionList: { name: string; section_type: string }[],
     username: string,
     data: any,
 }) => {
@@ -424,7 +372,7 @@ export const ItemDetails = ({username, data, isOpen, onClose, tagsList, sectionL
 
     return (
         <Modal onClose={onClose}>
-            <ItemDetailsPage username={username} data={data} tagsList={tagsList} sectionList={sectionList}/>
+            <ItemDetailsPage username={username} data={data}/>
         </Modal>
     );
 };

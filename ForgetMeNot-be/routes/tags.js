@@ -1,12 +1,38 @@
 var express = require('express');
 const Tag = require("../models/tag");
-const Section = require("../models/section");
 var tagsRouter = express.Router();
+const { Op } = require('sequelize');
 
 tagsRouter.get('/', async function (req, res) {
+    const { query } = req.query;
     try {
-        const tags = await Tag.findAll();
-        const tagsJson = tags.map(tags => tags.toJSON()).map(tags => ({tag_id: tags.tag_id, name: tags.tag_name}));
+        let tags;
+        let tagsJson = null;
+
+        if (query) {
+            console.log(`Searching for tags with query: ${query}`);
+            tags = await Tag.findAll({
+                where: {
+                    tag_name: {
+                        [Op.iLike]: `%${query}%`
+                    },
+                },
+            });
+
+            console.log(`Found tags: ${tags.length}`);
+            tagsJson = tags.map(tag => tag.tag_name);
+
+
+        } else {
+            tags = await Tag.findAll();
+
+            console.log(`Found tags: ${tags.length}`);
+            tagsJson = tags.map(tag => tag.toJSON()).map(tag => ({
+                tag_id: tag.tag_id,
+                name: tag.tag_name
+            }));
+
+        }
 
         res.json(tagsJson);
     } catch (error) {

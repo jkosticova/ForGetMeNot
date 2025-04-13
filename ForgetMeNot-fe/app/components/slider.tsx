@@ -4,17 +4,19 @@ type SliderProps = {
     min: number;
     max: number;
     step: number;
-    value: number;  // Controlled value prop
-    onChange: (value: number) => void;
+    value: number;
+    onChange?: (value: number) => void;
     label: string;
     disabled?: boolean;
 };
 
 export const Slider: React.FC<SliderProps> = ({ min, max, step, value, onChange, label, disabled }) => {
     const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!disabled) { // Only call onChange if not disabled
+        if (!disabled) {
             const newValue = parseInt(e.target.value);
-            onChange(newValue);
+            if (onChange) {
+                onChange(newValue);
+            }
         }
     };
 
@@ -29,7 +31,7 @@ export const Slider: React.FC<SliderProps> = ({ min, max, step, value, onChange,
                 step={step}
                 value={value}
                 onChange={handleSliderChange}
-                disabled={!onChange} // Optionally, disable slider if onChange is undefined
+                disabled={!onChange}
             />
         </div>
     );

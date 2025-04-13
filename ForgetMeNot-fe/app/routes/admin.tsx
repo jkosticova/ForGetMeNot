@@ -360,6 +360,7 @@ export default function AdminPage() {
     };
 
     const handleCancelEdit = () => {
+        setPrevRecord(null);
         setEditRecord(null);
         setEditingType(null);
     };
@@ -468,7 +469,7 @@ export default function AdminPage() {
     const tagColumns = tags.length > 0 ? [...Object.keys(tags[0]).filter(key => key !== 'tag_id'), 'Actions'] : [];
     const sectionColumns = sections.length > 0 ? [...Object.keys(sections[0]).filter(key => key !== 'section_id'), 'Actions'] : [];
     const userItemColumns = userItems.length > 0 ? [...Object.keys(userItems[0]).filter(key => key !== 'id'), 'Actions'] : [];
-    const itemColumns = items.length > 0 ? [...Object.keys(items[0]), 'Actions'] : [];
+    const itemColumns = items.length > 0 ? [...Object.keys(items[0]).filter(key => key !== 'item_id'), 'Actions'] : [];
 
     const renderEditForm = () => {
         if (!editRecord || !editingType) return null;
@@ -485,16 +486,16 @@ export default function AdminPage() {
         return (
             <form>
                 <table className={'min-w-full table-auto border-collapse shadow-md rounded-lg overflow-hidden'}>
-                    <thead>
-                    <tr className='bg-gray-100'>
-                        <th className={'px-4 py-2 text-left font-semibold text-gray-700 border-b'}>Original Value</th>
-                        <th className={'px-4 py-2 text-left font-semibold text-gray-700 border-b'}>Updated Value</th>
+                    <thead className={'bg-[var(--clr-surface-tonal-a10)]'}>
+                    <tr className={'bg-[var(--clr-surface-tonal-a10)]'}>
+                        <th className={'px-4 py-2 text-left font-semibold border-b'}>Original Value</th>
+                        <th className={'px-4 py-2 text-left font-semibold border-b'}>Updated Value</th>
                     </tr>
                     </thead>
                     <tbody>
                     {formFields.map((field: any) => (
                         <tr key={field.field}>
-                            <td className={'px-4 py-2 text-gray-600 border-b'}>
+                            <td className={'px-4 py-2 border-b'}>
                                 <p>{field.oldValue}</p>
                             </td>
                             <td className={'px-4 py-2 border-b'}>

@@ -4,7 +4,7 @@ var itemsRouter = express.Router();
 
 itemsRouter.get('/', async function (req, res) {
     try {
-        const items = await Item.findAll();
+        const items = await Item.findAll({attributes: {exclude: ['createdAt', 'updatedAt']}});
         const itemsJson = items.map(item => item.toJSON());
 
         res.json(itemsJson);

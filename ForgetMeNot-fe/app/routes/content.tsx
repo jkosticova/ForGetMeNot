@@ -31,8 +31,8 @@ async function getTags() {
         const response = await fetch('/api/tags');
 
         if (response.ok) {
-            const tagsList: string[] = await response.json();
-            return tagsList;
+            const tagsList: any[] = await response.json();
+            return tagsList.map(item => item.name);
         } else {
             console.error('Error fetching tags:', response.statusText);
             return [];
@@ -65,22 +65,20 @@ async function getItems(username: string) {
 }
 
 export default function Content() {
-    const authorList = ["M. Autora", "Martin Smith", "Maria Anders", "Michael Brown", "Megan Fox"];
     const [selectedItem, setSelectedItem] = useState<any | null>(null);
     const [sectionsList, setSectionsList] = useState<{ name: string; section_type: string }[]>([]);
     const [tagsList, setTagsList] = useState<string[]>([]);
     const [filteredSections, setFilteredSections] = useState<{ name: string; section_type: string }[]>([]);
+    const [filteredItems, setFilteredItems] = useState<any[]>([]);
+    const [filteredAuthor, setFilteredAuthor] = useState<string>("");
+    const [filteredTag, setFilteredTag] = useState<string>("");
     const [username, setUsername] = useState<string>('');
-    const [userItems, setUserItems] = useState<[]>([]);
+    const [userItems, setUserItems] = useState<any[]>([]);
 
     useEffect(() => {
         getSections().then((data) => {
             setSectionsList(data);
             setFilteredSections(data);
-        });
-
-        getTags().then((data) => {
-            setTagsList(data);
         });
 
         const savedUsername = localStorage.getItem('username');
@@ -92,9 +90,25 @@ export default function Content() {
         if (savedUsername != null) {
             getItems(savedUsername).then((data) => {
                 setUserItems(data.items);
+                setFilteredItems(data.items);
             });
         }
+
+        getTags().then((data) => {
+            setTagsList(data);
+        });
+
+        console.log('tags', tagsList)
     }, []);
+
+    useEffect(() => {
+        setFilteredItems(userItems.filter(item => item.author === filteredAuthor));
+    }, [filteredAuthor]);
+
+    useEffect(() => {
+        setFilteredItems(userItems.filter(item => item.tags.includes(filteredTag)));
+    }, [filteredTag]);
+
     const handleAddButtonClick = () => {
         setSelectedItem([]);
     };
@@ -105,13 +119,17 @@ export default function Content() {
 
     const filterItemsAll = () => {
         setFilteredSections(sectionsList);
+        setFilteredItems(userItems);
     }
     const filterItemsBooks = () => {
         setFilteredSections(sectionsList.filter(section => section.section_type === "Kniha"));
+        console.log(userItems);
+        setFilteredItems(userItems.filter(item => item.type === "knihy"));
     }
 
     const filterItemsFilms = () => {
         setFilteredSections(sectionsList.filter(section => section.section_type === "Film"));
+        setFilteredItems(userItems.filter(item => item.type === "filmy"));
     }
 
     return (
@@ -162,7 +180,7 @@ export default function Content() {
                     </div>
 
                     <div className={'w-[80%]'}>
-                        <SearchBar suggestions={authorList}/>
+                        <SearchBar url={'authors'} setSuggestions={setFilteredAuthor}/>
                     </div>
 
                     <div className={'border pl-3 pr-3 w-[80%]'}></div>
@@ -172,13 +190,13 @@ export default function Content() {
                     </div>
 
                     <div className={'w-[80%]'}>
-                        <SearchBar suggestions={tagsList}/>
+                        <SearchBar url={'tags'} setSuggestions={setFilteredTag}/>
                     </div>
                 </div>
 
                 <div className={'flex flex-wrap w-[80%] h-full mt-25 gap-7'}>
                     {userItems.length > 0 ? (
-                            userItems.map((item: any, index) => (
+                            filteredItems.map((item: any, index) => (
                                 <Item
                                     data={item}
                                     key={index}
@@ -196,8 +214,6 @@ export default function Content() {
                             data={selectedItem}
                             isOpen={true}
                             onClose={() => closeItem()}
-                            tagsList={tagsList}
-                            sectionList={sectionsList}
                         />
                     )}
                 </div>

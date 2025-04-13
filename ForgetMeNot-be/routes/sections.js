@@ -1,17 +1,38 @@
 var express = require('express');
 const Section = require("../models/section");
+const Tag = require("../models/tag");
+const {Op} = require("sequelize");
 var sectionsRouter = express.Router();
 
-/* GET users listing. */
-
 sectionsRouter.get('/', async function (req, res) {
+    const { query } = req.query;
+
     try {
-        const sections = await Section.findAll();
-        const sectionsJson = sections.map(section => section.toJSON()).map(section => ({
-            section_id: section.section_id,
-            section_name: section.section_name,
-            section_type: section.section_type
-        }));
+        let sections;
+        let sectionsJson = null;
+
+        if (query) {
+            console.log(`Searching for tags with query: ${query}`);
+            sections = await Section.findAll({
+                where: {
+                    section_name: {
+                        [Op.iLike]: `%${query}%`
+                    },
+                },
+            });
+
+            sectionsJson = sections.map(section => section.section_name);
+
+
+        } else {
+            sections = await Section.findAll();
+            sectionsJson = sections.map(section => section.toJSON()).map(section => ({
+                section_id: section.section_id,
+                section_name: section.section_name,
+                section_type: section.section_type
+            }));
+
+        }
 
         res.json(sectionsJson);
     } catch (error) {
