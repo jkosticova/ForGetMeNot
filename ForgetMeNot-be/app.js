@@ -28,6 +28,26 @@ sequelize.sync({ force: false }) // Change to true to drop & recreate tables
     .then(() => console.log("Tables have been created."))
     .catch(err => console.error("Error creating tables:", err));
 
+const session = require('express-session');
+require('dotenv').config();
+
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET || 'dev-secret',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: process.env.STATUS === 'production', // send only over HTTPS
+            httpOnly: true, // JS can't access cookie
+            sameSite: process.env.STATUS === 'production' ? 'none' : 'lax', // 'none' allows cross-site in production
+            maxAge: 1000 * 60 * 60 * 24 // 1 day
+        }
+    })
+);
+
+if (process.env.STATUS === 'production') {
+    app.set('trust proxy', 1); // trust first proxy
+}
 
 app.use(logger('dev'));
 app.use(express.json());
