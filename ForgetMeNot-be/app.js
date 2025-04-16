@@ -28,6 +28,11 @@ sequelize.sync({ force: process.env.RECREATE_DB === 'true' })
     .then(() => console.log("Tables have been created."))
     .catch(err => console.error("Error creating tables:", err));
 
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+
 const session = require('express-session');
 require('dotenv').config();
 
