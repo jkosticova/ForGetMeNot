@@ -24,17 +24,17 @@ var app = express();
 // app.use(express.json());
 
 connectDB();
-sequelize.sync({ force: process.env.RECREATE_DB === 'true' })
-    .then(() => console.log("Tables have been created."))
-    .catch(err => console.error("Error creating tables:", err));
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// sequelize.sync({ force: process.env.RECREATE_DB === 'true' })
+//     .then(() => console.log("Tables have been created."))
+//     .catch(err => console.error("Error creating tables:", err));
+//
 
 const session = require('express-session');
 require('dotenv').config();
+
+if (process.env.STATUS === 'production') {
+    app.set('trust proxy', 1); // trust first proxy
+}
 
 app.use(
     session({
@@ -49,10 +49,6 @@ app.use(
         }
     })
 );
-
-if (process.env.STATUS === 'production') {
-    app.set('trust proxy', 1); // trust first proxy
-}
 
 app.use(logger('dev'));
 app.use(express.json());
