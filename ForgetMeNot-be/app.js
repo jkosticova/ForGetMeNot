@@ -56,15 +56,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-app.use(cors({
-    origin: 'http://localhost:5173',
-}));
+// app.use(cors({
+//     origin: 'http://localhost:5173',
+// }));
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-});
+// const PORT = 3000;
+//
+// app.listen(PORT, () => {
+//     console.log(`Server listening on port ${PORT}`);
+// });
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
