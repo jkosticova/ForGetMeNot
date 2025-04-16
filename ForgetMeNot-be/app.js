@@ -24,7 +24,7 @@ var app = express();
 // app.use(express.json());
 
 connectDB();
-sequelize.sync({ force: false }) // Change to true to drop & recreate tables
+sequelize.sync({ force: process.env.RECREATE_DB === 'true' })
     .then(() => console.log("Tables have been created."))
     .catch(err => console.error("Error creating tables:", err));
 
